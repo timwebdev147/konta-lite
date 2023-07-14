@@ -4,37 +4,65 @@ import google_logo from "../../images/google-logo.svg"
 import microsoft_logo from "../../images/microsoft-logo.svg"
 import lock_icon from "../../images/lock_icon.svg"
 import business_info from "../../images/contract.png"
+import {RiEyeCloseLine, RiEyeLine} from "react-icons/ri"
+import { useEffect, useState } from 'react'
+import { FormattedMessage } from 'react-intl'
 
-function Login(params) {
+function Login({ lang, translatePage}) {
+    
+useEffect(() => {
+}, [lang])
 
     const footer_nav = [
         {
             link: '',
+            translateId: "login.footer_link_one",
             text: 'Terms of service',
         },
         {
             link: '',
+            translateId: "login.footer_link_two",
             text: 'Privacy policy',
         },
         {
             link: '',
+            translateId: "login.footer_link_three",
             text: 'Legal notice',
         },
         {
             link: '',
+            translateId: "login.footer_link_four",
             text: 'Cookie policy',
         },
         {
             link: '',
+            translateId: "login.footer_link_five",
             text: 'Cookie settings',
         },
     ]
+
+    
+
+    const [passwordVisibility, setPasswordVisibility] = useState('password')
+
+    function togglePasswordVisibility(){
+        if (passwordVisibility == "password") {
+            setPasswordVisibility("text")
+        }
+        else(
+            setPasswordVisibility("password")
+        )
+    }
     
 
 
     return (
         <>
         <div className={style.login}>
+        <select value={lang} name="" id="">
+                <option onClick={e => translatePage(e.target.value)} value="fr">French</option>
+                <option onClick={e => translatePage(e.target.value)} value="en">English</option>
+            </select>
             <div className={style.form}>
                 <img src={logo} alt="" />
                 <div className={style.oidc}>
@@ -45,30 +73,94 @@ function Login(params) {
                 <div className={style.or}>Or</div>
 
                 <div className={style.inputContainer}>
-                    <input type="text" placeholder='Email' />
-                    <input type="text" placeholder='Password' />
+                    <div>
+                    <input type="text" 
+                    placeholder={
+                        lang == "en"?  "Email":"E-mail"
+                        }
+                    />
+                    </div>
+                    <div>
+                    <input type={passwordVisibility}
+                     placeholder={
+                        lang == "en"?  "Password":"Mot de Passe"
+                        }
+                     />
+                    {
+                        passwordVisibility == "password"?
+                        <RiEyeCloseLine onClick={() => togglePasswordVisibility()} className={style.pass_icon} />:
+                        <RiEyeLine onClick={() => togglePasswordVisibility()} className={style.pass_icon} />
 
-                    <button>Sign in</button>
+                    }
+                    </div>
+
+                    <button>
+                            <FormattedMessage
+                            id="login.button"
+                            defaultMessage={"Sign in"}
+                            />
+                    </button>
 
                 </div>
                 <div className={style.noAccount}>
-                    <p>Don't have an account? <a href="">Sign up</a></p>
+                    <p>
+                    <FormattedMessage
+                    id="login.no_account"
+                    defaultMessage={"Don't have an account?"}
+                    />
+                    <a href="/register">
+                            <FormattedMessage
+                            id="login.no_account.link"
+                            defaultMessage={"Sign up"}
+                            />
+                    </a></p>
                 </div>
 
                 <div className={style.footer}>
                     {
                         footer_nav?.map((nav, index) => (
-                            <a key={index} href="">{nav.text}</a>
+                            <a key={index} href="">
+                              <FormattedMessage
+                                id={nav.translateId}
+                                defaultMessage={nav.text}
+                                />  
+                            </a>
                         ))
                     }
                 </div>
             
             </div>
             <div className={style.wallpaper}>
-                <h1>Manage Your Finances without hassle</h1>
-                <p>Thanks to the performance analysis tools, you can follow your progress and anticipate your decisions.</p>
+            
+                <h1>
+                <FormattedMessage
+                    id="login.wallpaper.header"
+                    defaultMessage={"Manage Your Finances without hassle"}
+                />
+                </h1>
+                <p>
+                <FormattedMessage
+                    id="login.wallpaper.text"
+                    defaultMessage={"Thanks to the performance analysis tools, you can follow your progress and anticipate your decisions."}
+                />
+                </p>
                 <img src={business_info} alt="" />
-                <a href="">Book a demo</a>
+                <a href="/register">
+                <FormattedMessage
+                    id="login.wallpaper.book"
+                    defaultMessage={"Book a demo"}
+                />
+                </a>
+                <div>
+                    <div>
+                <p className={style.contract_text} >
+                <FormattedMessage
+                    id="login.wallpaper.contract"
+                    defaultMessage={"Contract"}
+                />
+                </p>
+                    </div>
+                </div>
             </div>
         </div>
         </>

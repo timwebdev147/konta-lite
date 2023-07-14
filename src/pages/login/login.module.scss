@@ -1,8 +1,17 @@
+@use '../../styles/mediaQueries.modules.scss';
+
 .login{
     width: 100%;
     display: flex;
     height: 100vh;
     overflow: hidden;
+    
+    select{
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        z-index: 5;
+    }
 >div{
     width: 52%;
     height: 100%;
@@ -14,6 +23,10 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        @include mediaQueries.for-tablet-landscape-up{
+            width: 100%;
+            justify-content: center;
+        }
         div{
             width: 300px;
             display: flex;
@@ -71,24 +84,34 @@
             }
         }
         .inputContainer{
-            
-            input{
-                box-sizing: border-box;
-                border: 1px solid #dddde6;
-                height: 50px;
-                padding-left: 15px;
-                width: 100%;
-                border-radius: 4px ;
-                &:first-of-type{
-                    border-bottom-left-radius: 0;
-                    border-bottom-right-radius: 0;
+            div{
+                position: relative;
+                input{
+                    box-sizing: border-box;
+                    border: 1px solid #dddde6;
+                    height: 50px;
+                    padding-left: 15px;
+                    width: 100%;
+                    border-radius: 4px ;
+                    &:first-of-type{
+                        border-bottom-left-radius: 0;
+                        border-bottom-right-radius: 0;
+                    }
+                    &:nth-of-type(2){
+                        border-top: none;
+                        border-top-left-radius: 0;
+                        border-top-right-radius: 0;
+                    }
                 }
-                &:nth-of-type(2){
-                    border-top: none;
-                    border-top-left-radius: 0;
-                    border-top-right-radius: 0;
+                .pass_icon{
+                    color: grey;
+                    position: absolute;
+                    right: 10px;
+                    top: 18px;
+                    cursor: pointer;
                 }
             }
+            
             button{
                 cursor: pointer;
                 height: 50px;
@@ -138,6 +161,22 @@
                 color: rgba(128, 128, 128, 0.541);
                 font-size: small;
                 font-weight: 600;
+                @include mediaQueries.for-tablet-landscape-up{
+                    margin-right: 15px;
+                }
+                @include mediaQueries.for-phone-only{
+                    margin-right: 20px;
+                    text-decoration: underline;
+                }
+            }
+            @include mediaQueries.for-tablet-landscape-up{
+                position: absolute;
+                bottom: 0px;
+                justify-content: center;
+            }
+            @include mediaQueries.for-phone-only{
+                flex-wrap: wrap;
+
             }
         }
     }
@@ -146,6 +185,11 @@
         flex-direction: column;
         color: white;
         padding: 80px;
+        position: relative;
+        @include mediaQueries.for-tablet-landscape-up{
+            display: none;
+        }
+        
         h1{
             margin: 0;
             padding-top: 0;
@@ -155,9 +199,9 @@
             color: rgba(255, 255, 255, 0.612);
         }
         img{
-            margin-left: auto;
-            margin-right: auto;
+            margin-left: 10%;
             width: 450px;
+            // border: 1px solid black;
         }
         a{
             // margin-top: auto;
@@ -172,6 +216,42 @@
                 transition: 0.2s;
                 border: 1px solid rgba(255, 255, 255, 0.612);
             }
+        }
+        >div{
+            width: 450px;
+            // border: 1px solid red;
+            height: 251px;
+            position: fixed;
+            top: 206px;
+            left: 53%;
+            div{
+                width: 200px;
+                // border: 1px solid black;
+                background-color: #cb7402;
+                height: 60px;
+                position: relative;
+                top: 4px;
+                left: 41px;
+                margin: 32px 0;
+                .contract_text{
+                    border: 1px solid white;
+                    border-radius: 10px;
+                    padding: 3px 10px;
+                    color: white;
+                    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+                    margin: 0;
+                    font-weight: 500;
+                    width: fit-content;
+                    font-size: xx-large;
+                    background-color: #cb7402;
+                    z-index: 2;
+                    // border: 1px solid black;
+                    display: flex;
+                    align-items: center;
+                    // left: 28%
+                }
+            }
+
         }
     }
 }
