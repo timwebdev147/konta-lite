@@ -1,0 +1,19 @@
+
+
+.form{
+    margin-top: 20px;
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    .input{
+        width: 47%;
+        margin-bottom: 20px;
+    }
+    .button{
+        color: white;
+    }
+    .select{
+    }
+}

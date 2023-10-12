@@ -8,18 +8,24 @@ import secondImg from '../../images/usersmostlikelytorecommend_mid-market.png'
 import thirdImg from '../../images/leader_europe.png'
 import fourthImg from '../../images/highperformer_mid-market.png'
 import fithImg from '../../images/bestestimatedroi_small-business.png'
-import { createRef, useEffect, useRef, useState } from 'react'
+import { createRef, useEffect, useMemo, useRef, useState } from 'react'
 import {RiEyeCloseLine, RiEyeLine} from "react-icons/ri"
 import Select from 'react-select'
+// prop-types is a library for typechecking of props.
+import PropTypes from "prop-types";
 import { FormattedMessage } from 'react-intl'
+import countryList from 'react-select-country-list'
 
 
 function Register({translatePage, lang}){
+
+    // const [value, setValue] = useState('')
+  let options = useMemo(() => countryList().getData(), [])
     
 
     const [passwordVisibility, setPasswordVisibility] = useState('password')
     const [confirmPasswordVisibility, setConfirmPasswordVisibility] = useState('password')
-    const [selectOptions, setOptions] = useState()
+    // const [selectOptions, setOptions] = useState()
     // const [lang, setLang] = useState(locale)
 
 
@@ -85,14 +91,7 @@ function Register({translatePage, lang}){
             value: '',
             type: 'dropdown',
             translateId: "register.form.country",
-            options: [
-                "Self-employed",
-                "2-10",
-                "11-50",
-                "51-200",
-                "201-500",
-                "500+"
-            ],
+            options: options,
             class: 'halfwidth'
         },
         {
@@ -154,7 +153,7 @@ function Register({translatePage, lang}){
 
     useEffect(() => {
         let select = document.getElementById('multiSelect')
-        console.log(select);
+        console.log(select, options[0]);
     })
 
     const myRefs = useRef([]);
@@ -186,209 +185,229 @@ function Register({translatePage, lang}){
 
 
 
-    return(
-        <>
-        <div className={styles.register}>
-            <div className={styles.nav}>
-            <img src={logo} alt="" />
-            {/* <button onClick={() => translatePage(lang == "fr"? "en": "fr")}>{lang == "fr"? "french to english": "english to french"}</button> */}
-            <select value={lang} name="" id="">
-                <option onClick={e => translatePage(e.target.value)} value="fr">French</option>
-                <option onClick={e => translatePage(e.target.value)} value="en">English</option>
-            </select>
+return(
+    <>
+    <div className={styles.register}>
+        <div className={styles.nav}>
+        <img src={logo} alt="" />
+        {/* <button onClick={() => translatePage(lang == "fr"? "en": "fr")}>{lang == "fr"? "french to english": "english to french"}</button> */}
+        <select value={lang} name="" id="">
+            <option onClick={e => translatePage(e.target.value)} value="fr">French</option>
+            <option onClick={e => translatePage(e.target.value)} value="en">English</option>
+        </select>
+        </div>
+        <div className={styles.row}>
+            <div className={styles.column + " " + styles.about}>
+                <section>
+                    <h1>
+                        <FormattedMessage
+                        id="register.section_one.heading"
+                        defaultMessage={"Book your free demo of Konta"}
+                        />
+                    </h1>
+                    <p>
+                        <FormattedMessage
+                        id="register.section_one.text"
+                        defaultMessage={"Control spending and increase efficiency across your business with smart debit cards, effortless expense management and automated bookkeeping."}
+                        />
+                    </p>
+                </section>
+                <section>
+                    <div>
+                        <span>
+                        <BsFillCreditCard2BackFill className={styles.icon} />
+                        </span>
+                        <span>
+                            <strong>
+                                <FormattedMessage
+                                id="register.section_two.card_one.title"
+                                defaultMessage={"Secure payments"}
+                                />
+                            </strong>
+                            <p>
+                                <FormattedMessage
+                                id="register.section_two.card_one.text"
+                                defaultMessage={"Clever company cards, expenses and invoice management."}
+                                />
+                            </p>
+                        </span>
+                    </div>
+                    <div>
+                        <span>
+                        <HiOutlineDesktopComputer className={styles.icon} />
+                        </span>
+                        <span>
+                            <strong>
+                                <FormattedMessage
+                                id="register.section_two.card_two.title"
+                                defaultMessage={"Powerful software"}
+                                />
+                            </strong>
+                            <p>
+                                <FormattedMessage
+                                id="register.section_two.card_two.text"
+                                defaultMessage={"Track payments, manage approvals and control employee spending."}
+                                />
+                            </p>
+                        </span>
+                    </div>
+                    <div>
+                        <span>
+                        <FaRobot className={styles.icon} />
+                        </span>
+                        <span>
+                            <strong>
+                                <FormattedMessage
+                                id="register.section_two.card_three.title"
+                                defaultMessage={"Awesome automation"}
+                                />
+                            </strong>
+                            <p>
+                                <FormattedMessage
+                                id="register.section_two.card_three.text"
+                                defaultMessage={"98% receipt collection, automated accounting and expense reports."}
+                                />
+                            </p>
+                        </span>
+                    </div>
+                </section>
+                <section>
+                    <p>
+                                <FormattedMessage
+                                id="register.reviews"
+                                defaultMessage={"TRUSTED AND USED BY THOUSANDS OF FINANCE TEAMS AND EMPLOYEES!"}
+                                />
+                    </p>
+                    <div className={styles.gallery}>
+                    {
+                        imgMedal.map((image, index) => (
+                            <img src={image.path} key={index} alt="" />
+                        ))
+                    }
+                    </div>
+                </section>
+                
             </div>
-            <div className={styles.row}>
-                <div className={styles.column + " " + styles.about}>
-                    <section>
-                        <h1>
-                            <FormattedMessage
-                            id="register.section_one.heading"
-                            defaultMessage={"Book your free demo of Konta"}
-                            />
-                        </h1>
-                        <p>
-                            <FormattedMessage
-                            id="register.section_one.text"
-                            defaultMessage={"Control spending and increase efficiency across your business with smart debit cards, effortless expense management and automated bookkeeping."}
-                            />
-                        </p>
-                    </section>
-                    <section>
-                        <div>
-                            <span>
-                            <BsFillCreditCard2BackFill className={styles.icon} />
-                            </span>
-                            <span>
-                                <strong>
-                                    <FormattedMessage
-                                    id="register.section_two.card_one.title"
-                                    defaultMessage={"Secure payments"}
+            <div className={styles.column + " " + styles.form}>
+                <form action="">
+                    {
+                        fields.map((field, index) => (
+                            field.type != "dropdown"?
+                            field.type == "multiselect"?
+                        
+                            <div className={styles[field.class]}>
+                                <label htmlFor="">
+                                    <FormattedMessage 
+                                    id={field.translateId}
+                                    defaultMessage={field.label}
                                     />
-                                </strong>
-                                <p>
-                                    <FormattedMessage
-                                    id="register.section_two.card_one.text"
-                                    defaultMessage={"Clever company cards, expenses and invoice management."}
-                                    />
-                                </p>
-                            </span>
-                        </div>
-                        <div>
-                            <span>
-                            <HiOutlineDesktopComputer className={styles.icon} />
-                            </span>
-                            <span>
-                                <strong>
-                                    <FormattedMessage
-                                    id="register.section_two.card_two.title"
-                                    defaultMessage={"Powerful software"}
-                                    />
-                                </strong>
-                                <p>
-                                    <FormattedMessage
-                                    id="register.section_two.card_two.text"
-                                    defaultMessage={"Track payments, manage approvals and control employee spending."}
-                                    />
-                                </p>
-                            </span>
-                        </div>
-                        <div>
-                            <span>
-                            <FaRobot className={styles.icon} />
-                            </span>
-                            <span>
-                                <strong>
-                                    <FormattedMessage
-                                    id="register.section_two.card_three.title"
-                                    defaultMessage={"Awesome automation"}
-                                    />
-                                </strong>
-                                <p>
-                                    <FormattedMessage
-                                    id="register.section_two.card_three.text"
-                                    defaultMessage={"98% receipt collection, automated accounting and expense reports."}
-                                    />
-                                </p>
-                            </span>
-                        </div>
-                    </section>
-                    <section>
-                        <p>
-                                    <FormattedMessage
-                                    id="register.reviews"
-                                    defaultMessage={"TRUSTED AND USED BY THOUSANDS OF FINANCE TEAMS AND EMPLOYEES!"}
-                                    />
-                        </p>
-                        <div className={styles.gallery}>
-                        {
-                            imgMedal.map((image, index) => (
-                                <img src={image.path} key={index} alt="" />
-                            ))
-                        }
-                        </div>
-                    </section>
-                    
-                </div>
-                <div className={styles.column + " " + styles.form}>
-                    <form action="">
-                        {
-                            fields.map((field, index) => (
-                                field.type != "dropdown"?
-                                field.type == "multiselect"?
-                            
-                                <div className={styles[field.class] }>
-                                    <label htmlFor="">
+                                    <span>*</span>
+                                </label>
+                                <Select 
+                                id='multiSelect'
+                                className={styles.basic_multi_select}   
+                                isMulti options={field.options} 
+                                placeholder={
                                         <FormattedMessage 
-                                        id={field.translateId}
-                                        defaultMessage={field.label}
+                                        id={"register.form.choose_interest.placeholder"}
+                                        defaultMessage={"Select..."}
                                         />
-                                        <span>*</span>
-                                    </label>
+                                }
+                                />
+                            </div>:
+                            <div className={styles[field.class]} >
+                                <label htmlFor="">
+                                    <FormattedMessage 
+                                    id={field.translateId}
+                                    defaultMessage={field.label}
+                                    />
+                                    <span>*</span>
+                                </label>
+                                <input type={field.type} key={index} />
+                                {
+                                    field.name == "password"?
+                                    field.type == "password"?
+                                    <RiEyeCloseLine onClick={() => togglePasswordVisibility(field.prop)} className={styles.pass_icon} />:
+                                    <RiEyeLine onClick={() => togglePasswordVisibility(field.prop)} className={styles.pass_icon} />:
+                                    null
+                                }
+                            </div>
+                            :
+                            <div className={styles[field.class]} key={index}>
+                                <label htmlFor="">
+                                    <FormattedMessage 
+                                    id={field.translateId}
+                                    defaultMessage={field.label}
+                                    />
+                                    <span>*</span>
+                                </label>
+                                {
+                                    field.label == "country"? 
                                     <Select 
-                                    id='multiSelect'
-                                    className={styles.basic_multi_select}   
-                                    isMulti options={field.options} 
-                                    placeholder={
-                                            <FormattedMessage 
-                                            id={"register.form.choose_interest.placeholder"}
-                                            defaultMessage={"Select..."}
-                                            />
-                                    }
+                                // id='multiSelect'
+                                className={styles.basic_multi_select}   
+                                options={field.options} 
+                                placeholder={
+                                        // <FormattedMessage 
+                                        // id={"register.form.choose_interest.placeholder"}
+                                        // defaultMessage={"Select..."}
+                                        // />
+                                        "hello"
+                                }
+                                />:
+                                
+                            <select 
+                            name=""
+                            ref={myRefs.current[index]} 
+                            onClick={() => fullOpacity(myRefs.current[index])} id="select">
+                                <option hidden value="">
+                                    <FormattedMessage 
+                                    id="register.form.how_did_you_hear_about_us.placeholder"
+                                    defaultMessage="please select"
                                     />
-                                </div>:
-                                <div className={styles[field.class] } >
-                                    <label htmlFor="">
-                                        <FormattedMessage 
-                                        id={field.translateId}
-                                        defaultMessage={field.label}
-                                        />
-                                        <span>*</span>
-                                    </label>
-                                    <input type={field.type} key={index} />
-                                    {
-                                        field.name == "password"?
-                                        field.type == "password"?
-                                        <RiEyeCloseLine onClick={() => togglePasswordVisibility(field.prop)} className={styles.pass_icon} />:
-                                        <RiEyeLine onClick={() => togglePasswordVisibility(field.prop)} className={styles.pass_icon} />:
-                                        null
-                                    }
-                                </div>
-                                :
-                                <div className={styles[field.class] }>
-                                    <label htmlFor="">
-                                        <FormattedMessage 
-                                        id={field.translateId}
-                                        defaultMessage={field.label}
-                                        />
-                                        <span>*</span>
-                                    </label>
-                                <select 
-                                name=""
-                                ref={myRefs.current[index]} 
-                                onClick={() => fullOpacity(myRefs.current[index])} id="select">
-                                    <option hidden value="">
-                                        <FormattedMessage 
-                                        id="register.form.how_did_you_hear_about_us.placeholder"
-                                        defaultMessage="please select"
-                                        />
-                                    </option>
-                                    {
-                                        field.options?.map((option, index) => (
-                                            <option value="" key={index}>{option}</option>
-                                        ))
-                                    }
-                                </select>
+                                </option>
+                                {/* {
+                                    field.options?.map((option, index) => (
+                                        <option value="" key={index}>{option}</option>
+                                    ))
+                                } */}
+                            </select>}
 
-                                </div>
-                            ))
-                        }
-                                <div className={styles.checkbox}>
-                                    <input type="checkbox" />
-                                    <label htmlFor="">
-                                        <FormattedMessage
-                                            id='register.form.agreement'
-                                            defaultMessage={"I agree to be contacted by Spendesk for informational and marketing purposes according to the "}
-                                        />
-                                    &nbsp;
-                                    <a href=''>
-                                        <FormattedMessage id='register.form.agreement.PP_link' defaultMessage={'Privacy Policy'}/>
-                                    </a>.<span>*</span>
-                                    </label>
-                                </div>
-                                <button>
-                                    <FormattedMessage id='register.form.submit' defaultMessage={'Submit form'} />
-                                </button>
-                                <p className={styles.lastText}>
-                                    <FormattedMessage id='register.form.quick_info' defaultMessage={'No credit card required. No need to install software.'} />
-                                </p>
-                    </form>
+                            </div>
+                        ))
+                    }
+                            <div className={styles.checkbox}>
+                                <input type="checkbox" />
+                                <label htmlFor="">
+                                    <FormattedMessage
+                                        id='register.form.agreement'
+                                        defaultMessage={"I agree to be contacted by Spendesk for informational and marketing purposes according to the "}
+                                    />
+                                &nbsp;
+                                <a href=''>
+                                    <FormattedMessage id='register.form.agreement.PP_link' defaultMessage={'Privacy Policy'}/>
+                                </a>.<span>*</span>
+                                </label>
+                            </div>
+                            <button>
+                                <FormattedMessage id='register.form.submit' defaultMessage={'Submit form'} />
+                            </button>
+                            <p className={styles.lastText}>
+                                <FormattedMessage id='register.form.quick_info' defaultMessage={'No credit card required. No need to install software.'} />
+                            </p>
+                </form>
 
-                </div>
             </div>
         </div>
-        </>
-    )
+    </div>
+    </>
+);
 }
+
+Register.propTypes = {
+    lang: PropTypes.string,
+    translatePage: PropTypes.node,
+};
 
 
 export default Register;

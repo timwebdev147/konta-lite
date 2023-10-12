@@ -1,0 +1,35 @@
+$button: #3c96ef;
+
+
+.nav{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    div{
+    }
+
+    button{
+        padding: 0;
+        font-weight: 900;
+        min-width: 40px;
+        height: 20px;
+        .icon{
+            font-size: 18px !important;
+            font-weight: bolder;
+            color: black;
+            width: 20px;
+            
+        }
+        &:hover{
+            background-color: $button;
+            .icon{
+                color: white;
+            }
+        }
+    }
+    .pagination{
+        font-size: small;
+        color: black;
+    }
+}
