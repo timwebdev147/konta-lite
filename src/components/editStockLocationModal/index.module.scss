@@ -1,0 +1,70 @@
+.container {
+    background-color: rgba($color: #000000, $alpha: 0.6);
+    position: fixed;
+    top: 0;
+    z-index: 1200;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: flex-end;
+
+    >div {
+        width: 450px;
+        background-color: white;
+        height: 100vh;
+        
+        .first {
+            background-color: #2d3047;
+            width: 100%;
+            height: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            font-size: medium;
+
+            .icon {
+                cursor: pointer;
+            }
+        }
+        .client {
+            height: calc(100vh - 120px);
+            overflow-y: scroll;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            font-size: medium;
+
+            >label {
+                margin-bottom: 20px;
+            }
+
+            .formControl {
+                margin-bottom: 20px;
+
+                .formLabel {
+                    font-size: medium;
+                }
+            }
+
+            .RadioGroup {
+                display: flex;
+                flex-direction: row;
+            }
+
+        }
+
+        .button {
+            width: 100%;
+            height: 70px;
+            background-color: #7a5af8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: large;
+            border: none;
+            color: white;
+        }
+    }
+}
