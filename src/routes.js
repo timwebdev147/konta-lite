@@ -51,6 +51,9 @@ import Customers from "DashboardViews/customers/customers";
 import Suppliers from "DashboardViews/suppliers/suppliers";
 import InvoiceCustomer from "DashboardViews/invoicing/customerInvoice";
 import InvoiceSupplier from "DashboardViews/products";
+import Product from "DashboardViews/products";
+import Company from "DashboardViews/company";
+import Invoices from "DashboardViews/invoicing/customerInvoice/viewInvoice";
 
 const routes = [
   // {
@@ -101,22 +104,58 @@ const routes = [
     route: "suppliers",
     component: <Suppliers />,
   },
-      {
-        type: "collapse",
-        name: "Invoice",
-        key: "cInvoice",
-        icon: <Icon fontSize="small">money</Icon>,
-        route: "invoice/edit",
-        component: <InvoiceCustomer />
-      },
-      {
-        type: "collapse",
-        name: "Products & services",
-        key: "sInvoice",
-        icon: <Icon fontSize="small">request_quote</Icon>,
-        route: "product/edit",
-        component: <InvoiceSupplier />
-      }
+  {
+    type: "collapse",
+    name: "Invoice",
+    icon: <Icon fontSize="small">money</Icon>,
+    key: "viewInvoice",
+    route: "invoice",
+    component: <Invoices/>,
+  },
+  {
+    // type: "collapse",
+    icon: <Icon fontSize="small">money</Icon>,
+    name: "Create",
+    key: "createInvoice",
+    route: "invoice/create",
+    component: <InvoiceCustomer/>
+  },
+  // {
+  //   // type: "collapse",
+  //   name: "Invoice",
+  //   key: "Invoice",
+  //   icon: <Icon fontSize="small">money</Icon>,
+  //   collapse: [
+  //     {
+  //       name: "Invoice",
+  //       key: "viewInvoice",
+  //       route: "invoice/",
+  //       component: <Invoices/>
+  //     },
+  //     {
+  //       name: "Create",
+  //       key: "createInvoice",
+  //       route: "invoice/create",
+  //       component: <InvoiceCustomer/>
+  //     }
+  //   ]
+  // },
+  {
+    type: "collapse",
+    name: "Product",
+    key: "product",
+    icon: <Icon fontSize="small">request_quote</Icon>,
+    route: "product/edit",
+    component: <Product/>
+  },
+  {
+    type: "collapse",
+    name: "company",
+    key: "company",
+    icon: <Icon fontSize="small">business</Icon>,
+    route: "company/edit",
+    component: <Company />
+  }
   // {
   //   type: "collapse",
   //   name: "Sign In",

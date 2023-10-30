@@ -57,11 +57,6 @@ const EditModal = ({open, handleClose, partner}) => {
                 },
             ]
         }, 
-        // {
-        //     name: "team",
-        //     value: "",
-        //     type: "string"
-        // }, 
         {
             name: "language",
             label: "language",

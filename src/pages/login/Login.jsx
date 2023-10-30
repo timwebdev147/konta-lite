@@ -14,6 +14,8 @@ import 'react-toastify/dist/ReactToastify.css';
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
 import {  useNavigate } from 'react-router-dom'
+import { handleUserInfo } from 'redux/dashboardSlice'
+import { useDispatch } from 'react-redux'
 
 function Login({ lang, translatePage}) {
     
@@ -51,6 +53,11 @@ const footer_nav = [
     
 
 const [passwordVisibility, setPasswordVisibility] = useState('password')
+const [password, setPassword] = useState()
+const [username, setUsername] = useState()
+const cookie = window.localStorage.getItem("cookie")
+const navigate = useNavigate()
+const dispatch = useDispatch()
 
 function togglePasswordVisibility(){
     if (passwordVisibility == "password") {
@@ -60,13 +67,11 @@ function togglePasswordVisibility(){
         setPasswordVisibility("password")
     )
 }
-const [password, setPassword] = useState()
-const [username, setUsername] = useState()
-const navigate = useNavigate()
 
 
- function login(params) {
-    axios.post('http://localhost:9000/api/login', {
+
+  const login = async (params)  => {
+    await axios.post('http://localhost:9000/api/login', {
         password,
         username
     })
@@ -81,17 +86,29 @@ const navigate = useNavigate()
         )
         }, 2000)
         console.log(res.data);
+        
+        window.localStorage.setItem("cookie", res.data.cookie)
+        window.localStorage.setItem("ktwaIsLoggedIn", true)
+        window.localStorage.setItem("token", res.data.token)
+        const cookie = window.localStorage.getItem("cookie")
+         axios.get(`http://localhost:9000/api/user/auth/${username}`, {
+             headers: {
+                 cookiee: cookie,
+             }
+         }).then(response => {
+             dispatch(handleUserInfo(response.data[0]))
+         }).catch(err => console.log(err))
 
-    window.localStorage.setItem("cookie", res.data.cookie)
-    window.localStorage.setItem("ktwaIsLoggedIn", true)
-    window.localStorage.setItem("token", res.data.token)
     })
     .catch(err => {
         toast.error("incorrect password and email", {
             position: toast.POSITION.TOP_CENTER
-          });
+        });
         console.log(err)
     })
+
+
+    
 }
 
 useEffect(() => {
@@ -105,6 +122,7 @@ useEffect(() => {
         navigate('/account')
     }
 }, [])
+
 
 
 return (

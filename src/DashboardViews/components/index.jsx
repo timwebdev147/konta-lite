@@ -16,7 +16,7 @@ export function SearchListBox({data, select, isSelected}){
                 data?.map((item, index) => (
                     
                     <span onClick={() => {select(item);}} key={index}>
-                    <p >{item.simpleFullName || item.productName}</p>
+                    <p >{item.simpleFullName || item.fullName || item.productName}</p>
                     <div></div>
                     </span>
                 ))

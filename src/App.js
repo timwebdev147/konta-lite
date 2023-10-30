@@ -49,6 +49,10 @@ import routes from "routes";
 // Material Dashboard 2 React contexts
 import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "context";
 
+// for state management
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
+
 // Images
 import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
@@ -108,7 +112,9 @@ export default function App() {
   }, [])
   
   return (
+    
     <IntlProvider messages={bodyTexts} key={locale} locale={locale}>
+      <Provider store={store}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
       <ToastContainer />
        <Routes>
@@ -122,6 +128,7 @@ export default function App() {
     </Route>
     </Routes>
     </LocalizationProvider>
+  </Provider>
   </IntlProvider>
   )
 }

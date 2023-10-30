@@ -181,7 +181,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
 
   useEffect(() => {
-    handleTransparentSidenav()
+    handleDarkSidenav()
   }, [])
 
   return (
@@ -228,8 +228,9 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           component="button"  
           rel="noreferrer"
           variant="gradient"
+          sx={{backgroundColor: "#c66f01", color: "#fff"}}
           onClick={() => logout()}
-          color={sidenavColor}
+          // color={sidenavColor}
           fullWidth
         >
           Sign out

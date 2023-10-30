@@ -7,8 +7,8 @@ import logo from '../../../images/logo.png'
 import { useEffect, useState } from 'react';
 import { SearchListBox } from 'DashboardViews/components';
 import axios from 'axios';
-import { InvoiceClientEdit } from 'components/invoiceEdit';
-import { InvoiceProductEdit } from 'components/invoiceEdit';
+import { ClientEdit } from 'components/dataEdit';
+import { ProductEdit } from 'components/dataEdit';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 
@@ -25,30 +25,32 @@ const InvoiceCustomer = () => {
     const [selectedProduct, setSelectedProduct] = useState(null)
     const [paymentMode, setPaymentMode] = useState([])
     const [currencies, setCurrencies] = useState([])
+    const [companies, setCompanies] = useState([])
     const [productQuantity, setProductQuantity] = useState(1)
     const [totalPrice, setTotalPrice] = useState(null)
     const [apprPrice, setApprPrice] = useState(null)
     
     
     function simplifyData(){
-        let price = parseInt(selectedProduct?.price)
+        let price = parseInt(selectedProduct?.salePrice)
         price = price.toFixed(2)
         setApprPrice(price)
-
+        setTotalPrice(null)
+        setProductQuantity(1)
     }
     function updateQuantity(props){
         if (props == "increase") {
             let quantity = productQuantity + 1;
             setProductQuantity(quantity)
-            let total = selectedProduct?.price * quantity;
+            let total = selectedProduct?.salePrice * quantity;
             total = total.toFixed(2)
             console.log(total);
             setTotalPrice(total)
         }
         else {
-            let quantity = productQuantity - 1;
+            let quantity = productQuantity > 1? productQuantity - 1: 1;
             setProductQuantity(quantity)
-            let total = selectedProduct?.price * quantity;
+            let total = selectedProduct?.salePrice * quantity;
             total = total.toFixed(2)
             setTotalPrice(total)
         }
@@ -147,9 +149,23 @@ const InvoiceCustomer = () => {
         .catch(err => {
             console.log(err, cookie);
         })
-
+        
+        axios.get("http://localhost:9000/api/company", {
+            headers: {
+                cookiee: cookie.toString()
+            }
+        })
+        .then(res => {
+            let company = res.data.data;
+            setCompanies(company)
+            console.log("companies", company);
+        })
+        .catch(err => {
+            console.log(err, cookie);
+        })
         
     }
+
     function get_Clients_and_products(){
         axios.get("http://localhost:9000/api/partner", {
             headers: {
@@ -173,7 +189,7 @@ const InvoiceCustomer = () => {
         .then(res => {
             let productss = res.data.data;
             setProducts(productss)
-            console.log(productss);
+            console.log("producst", productss);
         })
         .catch(err => {
             console.log(err, cookie);
@@ -387,7 +403,7 @@ return(
                         <span onClick={() => updateQuantity("increase")}>+</span>
                     </div>
                     <div className={styles.info}>
-                        <p>Développement web</p>
+                        <p>{selectedProduct.fullName}</p>
                         <p>{totalPrice == null ? apprPrice: totalPrice} € par article</p>
                     </div>
                     <Icon className={styles.DPicon}>edit</Icon>
@@ -441,7 +457,34 @@ return(
                             {
                                 currencies?.map((currency, index) => (
 
-                                <MenuItem key={index} value={currency.id}>{currency.code}</MenuItem>
+                                <MenuItem key={index} value={currency.id}>{currency.name}</MenuItem>
+                                ))
+                            }
+                        </Select>
+            </FormControl>
+             {/* company select field */}
+            <FormControl className={styles.formControl}  sx={{width: '100%' }} >
+                        
+                        <FormLabel className={styles.formLabel}>Enterprise</FormLabel>
+                        <Select className={styles.select}
+                        sx={{ 
+                            color: "black",
+                            // padding: '0.70em',
+                            '.MuiSelect-icon': {
+                                display: 'block',
+                            },
+                            '.css-1cohrqd-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.MuiSelect-select': {
+                                padding: '0.70em !important',
+                            }
+                        }}
+                        displayEmpty
+                        id="demo-simple-select"
+                        >
+                            <MenuItem ><em>sélectionner une enterprise</em></MenuItem>
+                            {
+                                companies?.map((companies, index) => (
+
+                                <MenuItem key={index} value={companies.id}>{companies.name}</MenuItem>
                                 ))
                             }
                         </Select>
@@ -512,9 +555,9 @@ return(
 
 {
     showClientModal == true?
-    <InvoiceClientEdit close={setShowClientModal}/>: 
+    <ClientEdit close={setShowClientModal}/>: 
     showProductModal == true?
-    <InvoiceProductEdit close={setShowProductModal}/>: null
+    <ProductEdit close={setShowProductModal}/>: null
 }
 </>
 )

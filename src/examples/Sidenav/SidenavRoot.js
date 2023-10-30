@@ -36,6 +36,8 @@ export default styled(Drawer)(({ theme, ownerState }) => {
     backgroundValue = white.main;
   }
 
+  
+
   // styles for the sidenav when miniSidenav={false}
   const drawerOpenStyles = () => ({
     background: backgroundValue,

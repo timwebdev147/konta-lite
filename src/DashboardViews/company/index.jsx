@@ -5,23 +5,23 @@ import MDBox from "components/MDBox"
 import { Box, Icon } from "@mui/material"
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { ProductEdit } from "components/dataEdit"
 import { toast } from "react-toastify"
+import { CompanyEdit } from "components/dataEdit"
 
 
 
-const Product = () => {
+const Company = () => {
     const [showList, setShowList] = useState("")
     const [products, setProducts] = useState([])
     const [totalProducts, setTotalProduct] = useState(null)
-    const [showProductModal, setShowProductModal] = useState(false)
+    const [showCompanyModal, setShowCompanyModal] = useState(false)
     const [pagination, setPagination] = useState(1)
     const [showActionsIndex, setShowActionsIndex] = useState(null)
     const cookie = window.localStorage.getItem("cookie")
 
-    function get_products(pageNumber){
+    function get_companies(pageNumber){
 
-        axios.get("http://localhost:9000/api/product/page", {
+        axios.get("http://localhost:9000/api/company", {
             headers: {
                 cookiee: cookie.toString(),
                 pagination: pageNumber
@@ -41,7 +41,7 @@ const Product = () => {
     function showModal(props){
         document.body.style.overflowY = "hidden"
         if(props == "product"){
-            setShowProductModal(true)
+            setShowCompanyModal(true)
         }
     }
 
@@ -92,12 +92,12 @@ const Product = () => {
             if (props == "increase" ) {
                 let page = pagination + 1;
                 setPagination(page)
-                get_products(page)
+                get_companies(page)
             }
             else if (pagination > 1) {
                 let page = pagination - 1;
                 setPagination(page)
-                get_products(page)
+                get_companies(page)
             }
     }
 
@@ -106,22 +106,22 @@ const Product = () => {
         fields.forEach(field => {
             formData[field.name] = field.value
         })
-        axios.post("http://localhost:9000/api/product/create", formData, {
+        axios.post("http://localhost:9000/api/company/create", formData, {
             headers: {
                 cookiee: cookie.toString()
             }
         }).then(res => {
             console.log(res);
-            get_products()
-            toast.success("product has been created")
-            setShowProductModal(false)
+            get_companies()
+            toast.success("company has been created")
+            setShowCompanyModal(false)
             document.body.style.overflowY = "scroll";
         }).catch(err => console.log(err))
     }
 
 
     useEffect(() => {
-        get_products()
+        get_companies()
     },[])
 
 
@@ -135,13 +135,10 @@ return (
 <Box className={styles.container}>
     <div className={styles.filter}>
         <div className={styles.tous}><span ></span><p>Tous</p></div>
-        <div className={styles.service}><span ></span><p>Service</p></div>
-        <div className={styles.produit}><span ></span><p>Produit</p></div>
-        <div className={styles.debours}><span ></span><p>Debours</p></div>
     </div>
     <div className={styles.newArticleContainer}>
         <span>exporter<Icon>keyboard_arrow_down</Icon></span>
-        <button onClick={() => showModal("product")} className={styles.button}>Ajouter un nouvel article</button>
+        <button onClick={() => showModal("product")} className={styles.button}>Ajouter un nouvel enterprise</button>
     </div>
     <div className={styles.searchBox}>
         <div>
@@ -154,12 +151,12 @@ return (
                 <Icon className={styles.inputIcon}>search</Icon>
             </div>
     </div>
-    <div className={styles.itemLists}>
+    <div className={styles.productLists}>
         <div className={styles.tags}>
-            <div>Nom du produit</div>
+            <div>Nom de l’enterprise</div>
             <div className={styles.midCont}>
-                <div>Quantité facturée</div>
-                <div>Prix unitaire</div>
+                <div>ifu</div>
+                <div>devise</div>
                 <div>Date de création</div>
             </div>
             <div>Actions</div>
@@ -172,12 +169,12 @@ return (
                     <span className={styles.iconCont}><Icon>event_note</Icon></span>
                     <div className={styles.text}>
                         <p>{product.name}</p>
-                        <p>Identifiant article: 0001</p>
+                        <p>company code: {product.code}</p>
                     </div>
                 </div>
                 <div className={styles.midCont}>
-                    <div>0 Unité(s)</div>
-                    <div>{parseInt(product.salePrice).toFixed(2)} €</div>
+                    <div>{product.ifu || "---"}</div>
+                    <div>{product.currency?.code || "---"}</div>
                     <div>04 Sept 2023</div>
                 </div>
                 <div onClick={() => show_actions(index)}>
@@ -204,11 +201,11 @@ return (
 </DashboardLayout>
 
 {
-    showProductModal == true?
-    <ProductEdit submit={submit} close={setShowProductModal}/>: null
+    showCompanyModal == true?
+    <CompanyEdit submit={submit} close={setShowCompanyModal}/>: null
 }
 </>
 )
 }
 
-export default Product
+export default Company
