@@ -47,17 +47,16 @@ import SignUp from "pages/register/Register";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
-import Customers from "DashboardViews/customers/customers";
-import Suppliers from "DashboardViews/suppliers/suppliers";
 import Employees from "DashboardViews/employees";
+import Partners from "DashboardViews/partner/partners";
 import InvoiceCustomer from "DashboardViews/invoicing/customerInvoice";
-import InvoiceSupplier from "DashboardViews/products";
 import Product from "DashboardViews/products";
 import Company from "DashboardViews/company";
 import Invoices from "DashboardViews/invoicing/customerInvoice/viewInvoice";
+import Entries from "DashboardViews/accounting/entries";
+import Payments from "DashboardViews/accounting/payments";
 import StockLocations from "DashboardViews/stockLocations";
 import StockLocationDetails from "DashboardViews/stockLocations/stocksLocationDetails";
-
 
 const routes = [
   // {
@@ -94,20 +93,20 @@ const routes = [
   // },
   {
     type: "collapse",
-    name: "Customers",
-    key: "Customers",
+    name: "Partner",
+    key: "Partners",
     icon: <Icon fontSize="small">groups</Icon>,
-    route: "customers",
-    component: <Customers />,
+    route: "partner",
+    component: <Partners />,
   },
-  {
-    type: "collapse",
-    name: "Suppliers",
-    key: "suppliers",
-    icon: <Icon fontSize="small">warehouse</Icon>,
-    route: "suppliers",
-    component: <Suppliers />,
-  },
+  // {
+  //   type: "collapse",
+  //   name: "Suppliers",
+  //   key: "suppliers",
+  //   icon: <Icon fontSize="small">warehouse</Icon>,
+  //   route: "suppliers",
+  //   component: <Suppliers />,
+  // },
   {
     type: "collapse",
     name: "Employees",
@@ -182,7 +181,27 @@ const routes = [
     key: "stocksDetails",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "stocks/:id",
-    component: <StockLocationDetails />
+    component: <StockLocationDetails />,
+    type: "title",
+    title: "accounting",
+    name: "accounting",
+    key: "accounting",
+  },
+  {
+    type: "collapse",
+    name: "Entries",
+    key: "entries",
+    route: "accounting/entries",
+    icon: <Icon fontSize="small">business</Icon>,
+    component: <Entries/>
+  },
+  {
+    type: "collapse",
+    name: "Payments",
+    key: "payments",
+    route: "accounting/payments",
+    icon: <Icon fontSize="small">business</Icon>,
+    component: <Payments/>
   }
   // {
   //   type: "collapse",
