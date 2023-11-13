@@ -28,10 +28,10 @@ export const EditStockLineModal = ({ currentStock, close, submit }) => {
         },
         {
             type: "text",
-            radioLabel: "Quantité curante",
+            radioLabel: "Quantité courante",
             name: "currentQty",
             value: undefined,
-            placeholder: "Entrez la quantité curante du produit"
+            placeholder: "Entrez la quantité courante du produit"
 
         },
         {
@@ -104,10 +104,10 @@ export const EditStockLineModal = ({ currentStock, close, submit }) => {
         let clonedFields = [...formFields];
         clonedFields.push({
             type: "text",
-            radioLabel: "Stock curante",
+            radioLabel: "Stock courante",
             name: "stockLocation",
             value: currentStock,
-            placeholder: "Stock curante"
+            placeholder: "Stock ocurante"
         },);
         submit(clonedFields);
     }

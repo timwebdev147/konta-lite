@@ -68,7 +68,6 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 
-
 export default function App() {
   const [locale, setLocale] = useState("fr");
   const [bodyTexts, setBodyTexts] = useState();
@@ -123,7 +122,7 @@ export default function App() {
     <Route path='account' element= {<Dashboardd/>} >
     {/* <Routes> */}
         {getRoutes(routes)}
-        <Route path="account/*" element={<Navigate to="/" />} />
+        <Route path="account/*" element={<Navigate to="/" />}  />
       {/* </Routes> */}
     </Route>
     </Routes>

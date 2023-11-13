@@ -4,11 +4,21 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './index.module.scss';
 
-export const EditStockLocationModal = ({ close, submit }) => {
+export const EditStockLocationModal = ({ editStock, close, submit }) => {
     const [formFields, setFormFields] = useState([]);
     const [companies, setCompanies] = useState([]);
     const [stockLocations, setStockLocations] = useState([]);
+    const [addressData, setAddressData] = useState([]);
+    const [formData, setFormData] = useState({
+        name: undefined,
+        parentStockLocation:  editStock != undefined ? '' : undefined,
+        typeSelect: editStock != undefined ? '' : undefined,
+        address: undefined,
+        addressL6: undefined,
+        company: editStock != undefined ? '' : undefined,
+    });
     const host = "http://localhost:9000/api";
+    const cookie = window.localStorage.getItem("cookie");
     const form = [
         {
             type: "select",
@@ -39,7 +49,7 @@ export const EditStockLocationModal = ({ close, submit }) => {
         },
         {
             type: "select",
-            radioLabel: "Type de client",
+            radioLabel: "Type de stock",
             name: "typeSelect",
             value: undefined,
             options: [
@@ -82,22 +92,70 @@ export const EditStockLocationModal = ({ close, submit }) => {
     }, []);
 
     useEffect(() => {
-        setFormFields(form);
-    }, [companies, stockLocations]);
+        editStock != undefined ? getEditData() : ''
+    }, []);
 
     useEffect(() => {
         getCompanies();
         getStockLocations()
     }, []);
 
-    const cookie = window.localStorage.getItem("cookie");
+    useEffect(() => {
+        setFormFields(form);
+    }, [companies, stockLocations, formData]);
 
-    function handleChange(value, index) {
 
-        let clonedFields = [...formFields];
-        clonedFields[index].value = value;
-        setFormFields(clonedFields);
-        console.log(formFields)
+  
+
+    async function getEditData()  {
+        console.log("***Stock on edit ***", editStock)
+        if (editStock?.address?.id) {
+        let addressData;
+            await axios.get(`${host}/model/data/com.axelor.apps.base.db.Address/${editStock.address.id}`, {
+                headers: {
+                    cookiee: cookie.toString(),
+                }
+            })
+                .then(res => {
+                    addressData = res.data.data[0];
+                    setAddressData(addressData)
+                    console.log("***Edit AddressData******", addressData);
+                })
+                .catch(err => {
+                    console.log("??????? ERREUR ?????", err);
+                })
+                
+            }
+            setEditData(addressData)
+            
+    }
+
+    function setEditData(addressData) {
+        console.log("************ Stock on setData  ******,", addressData)
+        let clonedData = formData;
+        clonedData.name = editStock?.name;
+        clonedData.company = editStock?.company?.id;
+        clonedData.typeSelect = editStock?.typeSelect;
+        clonedData.parentStockLocation = editStock?.mobilePhone;
+        clonedData.address = addressData?.addressL4;
+        clonedData.addressL6 = addressData?.addressL6;
+        setFormData(clonedData);
+        console.log("************ EditFormsFildsValue ******,", clonedData)
+    }
+
+    // function handleChange(value, index) {
+
+    //     let clonedFields = [...formFields];
+    //     clonedFields[index].value = value;
+    //     setFormFields(clonedFields);
+    //     console.log(formFields)
+    // }
+
+    function handleChange(value, name) {
+        let clonedData =formData;
+        clonedData[name] = value;
+        setFormData(clonedData);
+        setFormFields(form);
     }
 
     function getCompanies() {
@@ -132,9 +190,9 @@ export const EditStockLocationModal = ({ close, submit }) => {
             })
     }
 
-    function handleSubmit(event){
+    function handleSubmit(event) {
         event.preventDefault();
-        submit(formFields);
+        submit(formData);
     }
 
     return (
@@ -163,9 +221,9 @@ export const EditStockLocationModal = ({ close, submit }) => {
                                                 }
                                             }}
                                             id="demo-simple-select"
-                                            value={field.value}
+                                            value={formData[field.name]}
                                             required={field.required}
-                                            onChange={e => handleChange(e.target.value, index)}
+                                            onChange={e => handleChange(e.target.value, field.name)}
                                         >
                                             {
                                                 field.options.map((option, index) => (
@@ -180,8 +238,12 @@ export const EditStockLocationModal = ({ close, submit }) => {
                                                 <TextField
                                                     required={field.required}
                                                     className={styles.input} key={index}
-                                                    type={field.type} onChange={e => handleChange(e.target.value, index)}
-                                                    id="outlined-basic" label={field.placeholder} variant="outlined"
+                                                    value={formData[field.name]}
+                                                    type={field.type} 
+                                                    onChange={e => handleChange(e.target.value, field.name)}
+                                                    id="outlined-basic"
+                                                    label={editStock == undefined ? field.placeholder : ''}
+                                                    variant="outlined"
                                                 /> : <></>
                                         }
                                     </FormControl>
@@ -198,6 +260,8 @@ export const EditStockLocationModal = ({ close, submit }) => {
 }
 
 EditStockLocationModal.propTypes = {
+    editStock: PropTypes.object,
+    isEdit: PropTypes.bool,
     close: PropTypes.func,
     submit: PropTypes.func
 }

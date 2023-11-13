@@ -6,27 +6,34 @@ import { toast } from "react-toastify"
 import PropTypes from 'prop-types'
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout"
 import DashboardNavbar from "examples/Navbars/DashboardNavbar"
-import styles from '../index.module.scss';
+import styles from '../../styles.module.scss';
 import customStyles from '../styles.module.scss';
 import { EditStockLineModal } from "components/editStockLocationModal/editStockLineModal"
+import { useParams } from "react-router-dom"
 
 
 
-const StockLocationDetails = ({ id }) => {
+const StockLocationDetails = () => {
     const [location, setStockLocation] = useState([])
     const [stockLines, setStockLines] = useState([])
+     const [totalLines, setTotalLines] = useState(null)
     const [lineIds, setLineIds] = useState([])
     const [showStockLineModal, setShowStockLineModal] = useState(false)
+    const [pagination, setPagination] = useState(1)
     const cookie = window.localStorage.getItem("cookie")
+    let { id } = useParams()
+    
     async function get_stockLocation() {
         axios.get(`http://localhost:9000/api/stock/${id}`, {
             headers: {
                 cookiee: cookie.toString(),
+               
             }
         })
             .then(res => {
                 let data = res.data.data[0];
                 setStockLocation(data);
+                
                 console.log("**DATA**", data);
                 setLineIds(data.stockLocationLineList);
             })
@@ -38,7 +45,8 @@ const StockLocationDetails = ({ id }) => {
     function get_stock_lines() {
         console.log("***LINES_IDs***", lineIds);
         let lines = [];
-        lineIds.map(async (line) => {
+        if(lineIds.length > 0 ){
+        lineIds?.map(async (line) => {
             axios.get(`http://localhost:9000/api/stockline/${line.id}`, {
                 headers: {
                     cookiee: cookie.toString(), 
@@ -52,9 +60,11 @@ const StockLocationDetails = ({ id }) => {
                     console.log("**ERROR**", err);
                 })
 
-        });
+        }
+        
+        ) 
+        setStockLines(lines);}
         console.log("***LINES***", lines);
-        setStockLines(lines);
     }
 
     function showModal(props) {
@@ -63,8 +73,6 @@ const StockLocationDetails = ({ id }) => {
             setShowStockLineModal(true)
         }
     }
-
-
 
     function submit(fields) {
         const formData = {}
@@ -113,18 +121,19 @@ const StockLocationDetails = ({ id }) => {
                             </div>
                             <div>
                                 <div>Addresse</div>
-                                <div>{location?.address}</div>
+                                <div>{location?.address?.fullName}</div>
                             </div>
                             <div>
                                 <div>Type</div>
                                 <div>{location.typeSelect == 1 ? "Interne" : location.typeSelect == 2 ? "Externe" : "Virtuel"}</div>
                             </div>
                         </div>
-                        <p>Lines du stock : </p>
-                        <div className={styles.newArticleContainer}>
+                        <br/>
+                        <div className={styles.newItemContainer}>
+                        <p className={styles.litle}>Lines du stock : </p>
                             <button onClick={() => showModal("stockLocationLine")} className={styles.button}>Ajouter une ligne de stock</button>
                         </div>
-                        <div className={customStyles.productLists}>
+                        <div className={customStyles.itemLists}>
                             <div className={customStyles.listHead}>
                                 <div className={customStyles.productCol} >Produit</div>
                                 <div> Quantité actuelle</div>
@@ -144,6 +153,9 @@ const StockLocationDetails = ({ id }) => {
                                 ))
                             }
                         </div>
+                        <div className={styles.total}>
+                            <p>Total : {lineIds.length} lignes de Stock</p>
+                        </div>
                     </Box>
                 </MDBox>
             </DashboardLayout>
@@ -154,10 +166,6 @@ const StockLocationDetails = ({ id }) => {
             }
         </>
     )
-}
-
-StockLocationDetails.propTypes = {
-    id: PropTypes.number
 }
 
 export default StockLocationDetails

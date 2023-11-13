@@ -1,0 +1,52 @@
+.mymodal {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    background-color: white;
+    padding: 1rem;
+    text-align: center;
+    width: 30rem;
+    z-index: 99999;
+  }
+  .backdrop {
+    position: fixed;
+    z-index: 9999;
+    background-color: rgba(0, 0, 0, 0.75);
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mymodal h3{
+    margin-bottom: 2rem;
+  }
+  .btns {
+    margin-top: auto;
+  }
+  .confirm {
+    background: #c66f01;
+    color: #fff ;
+    width: 120px;
+    padding: 5px;
+    border: 1px solid #a66f01;
+    margin-left: 0.5rem;
+    border-radius: 5px;
+  }
+  .confirm:hover {
+    background: #a66f01;
+  }
+  .cancel {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff ;
+    width: 120px;
+    padding: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.6);
+    margin-left: 0.5rem;
+    border-radius: 5px;
+  }
+  .cancel:hover {
+    background-color: rgba(0, 0, 0, 0.6) ;
+  }
+  

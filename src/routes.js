@@ -49,11 +49,15 @@ import SignUp from "pages/register/Register";
 import Icon from "@mui/material/Icon";
 import Customers from "DashboardViews/customers/customers";
 import Suppliers from "DashboardViews/suppliers/suppliers";
+import Employees from "DashboardViews/employees";
 import InvoiceCustomer from "DashboardViews/invoicing/customerInvoice";
 import InvoiceSupplier from "DashboardViews/products";
 import Product from "DashboardViews/products";
 import Company from "DashboardViews/company";
 import Invoices from "DashboardViews/invoicing/customerInvoice/viewInvoice";
+import StockLocations from "DashboardViews/stockLocations";
+import StockLocationDetails from "DashboardViews/stockLocations/stocksLocationDetails";
+
 
 const routes = [
   // {
@@ -106,6 +110,14 @@ const routes = [
   },
   {
     type: "collapse",
+    name: "Employees",
+    key: "employees",
+    icon: <Icon fontSize="small">warehouse</Icon>,
+    route: "employees",
+    component: <Employees />,
+  },
+  {
+    type: "collapse",
     name: "Invoice",
     icon: <Icon fontSize="small">money</Icon>,
     key: "viewInvoice",
@@ -155,6 +167,22 @@ const routes = [
     icon: <Icon fontSize="small">business</Icon>,
     route: "company/edit",
     component: <Company />
+  },
+  {
+    type: "collapse",
+    name: "Emplacement de Stocks",
+    key: "stocks",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "stocks",
+    component: <StockLocations />
+  },
+  {
+    // type: "collapse",
+    name: "Details de Stock",
+    key: "stocksDetails",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "stocks/:id",
+    component: <StockLocationDetails />
   }
   // {
   //   type: "collapse",

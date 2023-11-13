@@ -1,12 +1,13 @@
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout"
 import DashboardNavbar from "examples/Navbars/DashboardNavbar"
-import styles from './index.module.scss';
-import customStyles from './styles.module.scss';
+import styles from '../styles.module.scss';
+import { useNavigate } from "react-router-dom"
 import MDBox from "components/MDBox"
 import { Box, Icon } from "@mui/material"
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { EditStockLocationModal } from "../../components/editStockLocationModal"
+import { ConfirmationModal } from "../../components/confirmationModal"
 import { toast } from "react-toastify"
 
 
@@ -14,13 +15,15 @@ import { toast } from "react-toastify"
 const StockLocations = () => {
     const [showList, setShowList] = useState("")
     const [locations, setStockLocations] = useState([])
-    const [selectedId, setSelectedId] = useState()
+    const [selectedId, setSelectedId] = useState(0)
+    const [currentStock, setCurrentStock] = useState(0)
     const [totalStockLocations, setTotalStockLocation] = useState(null)
     const [showStockLocationModal, setShowStockLocationModal] = useState(false)
     const [showStockLocation, setShowStockLocation] = useState(false)
     const [showEditModal, setShowEditModal] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [pagination, setPagination] = useState(1)
+    const navigate = useNavigate()
     const cookie = window.localStorage.getItem("cookie")
 
     function get_stockLocations(pageNumber) {
@@ -46,6 +49,9 @@ const StockLocations = () => {
         document.body.style.overflowY = "hidden"
         if (props == "stockLocation") {
             setShowStockLocationModal(true)
+        }
+        if (props == "stockLocationEdit") {
+            setShowEditModal(true)
         }
     }
 
@@ -80,11 +86,11 @@ const StockLocations = () => {
         }
     }
 
-    function submit(fields) {
-        const formData = {}
-        fields.forEach(field => {
-            formData[field.name] = field.value
-        })
+    function submit(formData) {
+        // const formData = {}
+        // fields.forEach(field => {
+        //     formData[field.name] = field.value
+        // })
         console.log("******FORMDATA*****", formData);
         axios.post("http://localhost:9000/api/stock/create", formData, {
             headers: {
@@ -93,12 +99,42 @@ const StockLocations = () => {
         }).then(res => {
             console.log(res);
             get_stockLocations()
-            toast.success("StockLocation has been created")
+            toast.success("Stock créé avec succès !")
             setShowStockLocationModal(false)
             document.body.style.overflowY = "scroll";
         }).catch(err => console.log(err))
     }
 
+    function onMenuOpen(data) {
+        if (selectedId == data.id) {
+            setSelectedId(0)
+            setCurrentStock();
+        } else {
+            setSelectedId(data.id);
+            setCurrentStock(data);
+        }
+    }
+
+    function onDelete() {
+        axios.delete(`http://localhost:9000/api/stock/${selectedId}`, {
+            headers: {
+                cookiee: cookie.toString(),
+            }
+        }).then(res => {
+            get_stockLocations()
+            toast.success("Stock supprimer avec succès !")
+            setShowDeleteModal(false)
+            document.body.style.overflowY = "scroll";
+        }).catch(err => {
+            console.log("*****DELETE ERROR ****", err)
+            toast.error("Erreur de suppression de Stock !")
+            setShowDeleteModal(false)
+        })
+    }
+
+    function onDeleteCanled() {
+        setShowDeleteModal(false)
+    }
 
     useEffect(() => {
         get_stockLocations()
@@ -119,7 +155,7 @@ const StockLocations = () => {
                             <div className={styles.produit}><span ></span><p>Externe</p></div>
                             <div className={styles.debours}><span ></span><p>Virtuel</p></div>
                         </div>
-                        <div className={styles.newArticleContainer}>
+                        <div className={styles.newItemContainer}>
                             <span>exporter<Icon>keyboard_arrow_down</Icon></span>
                             <button onClick={() => showModal("stockLocation")} className={styles.button}>Ajouter un emplacement de stock</button>
                         </div>
@@ -130,11 +166,11 @@ const StockLocations = () => {
                                         <div></div> :
                                         null
                                 }
-                                <input onFocus={() => show("first")} onBlur={() => { setTimeout(() => { hide("first") }, 500) }} placeholder="Rechercher un article ou numero d'identifant" type="text" />
+                                <input onFocus={() => show("first")} onBlur={() => { setTimeout(() => { hide("first") }, 500) }} placeholder="Rechercher un stock ou numero d'identifant" type="text" />
                                 <Icon className={styles.inputIcon}>search</Icon>
                             </div>
                         </div>
-                        <div className={styles.productLists}>
+                        <div className={styles.itemLists}>
                             <div className={styles.tags}>
                                 <div>Nom de Stock</div>
                                 <div className={styles.midCont}>
@@ -147,7 +183,7 @@ const StockLocations = () => {
                             {
                                 locations?.map((stocklocation, index) => (
 
-                                    <div key={index} className={styles.product}>
+                                    <div key={index} className={styles.item} >
                                         <div className={styles.name}>
                                             <span className={styles.iconCont}><Icon>person_outline</Icon></span>
                                             <div className={styles.text}>
@@ -160,17 +196,14 @@ const StockLocations = () => {
                                             <div>{stocklocation.address?.fullName}</div>
                                             <div>{stocklocation.typeSelect == 1 ? "Interne" : stocklocation.typeSelect == 2 ? "Externe" : "Virtuel"}</div>
                                         </div>
-                                        <div 
-                                            onClick={() => {
-                                                stocklocation.id === selectedId?  setSelectedId("") : setSelectedId(stocklocation.id);
-                                            }}
+                                        <div
                                         >
-                                            <Icon>more_vert</Icon>
+                                            <Icon onClick={() => onMenuOpen(stocklocation)} >more_vert</Icon>
                                             {stocklocation.id === selectedId && (
-                                                <div className={`${customStyles.optionnemu}  `}>
-                                                    <Icon onClick={() => setShowStockLocation(true)} >eye</Icon>
-                                                    <Icon onClick={() => setShowEditModal(true)} >edit</Icon>
-                                                    <Icon onClick={() => setShowDeleteModal(true)} >delete</Icon>
+                                                <div className={`${styles.optionnemu}  `}>
+                                                    <Icon className={`${styles.option} ${styles.showoption} `} onClick={() => navigate(`/account/stocks/${stocklocation.id}`)}>visibility</Icon>
+                                                    <Icon className={`${styles.option} ${styles.editoption} `} onClick={() => showModal("stockLocationEdit")} >edit</Icon>
+                                                    <Icon className={`${styles.option} ${styles.deleteoption} `} onClick={() => setShowDeleteModal(true)} >delete</Icon>
                                                 </div>
                                             )}
                                         </div>
@@ -191,9 +224,10 @@ const StockLocations = () => {
                     <EditStockLocationModal submit={submit} close={setShowStockLocationModal} /> : null
             }
             {showEditModal == true ?
-                <EditStockLocationModal submit={submit} close={setShowEditModal} /> : null}
+                <EditStockLocationModal submit={submit} editStock={currentStock} close={setShowEditModal} /> : null}
             {showDeleteModal == true ?
-                <EditStockLocationModal submit={submit} close={setShowDeleteModal} /> : null}
+                <ConfirmationModal onCancel={onDeleteCanled} cancel="Annuler" confirm="Valider"
+                    text="Voullez-vous vraiment supprimer cet stock ?" onConfirm={onDelete} /> : null}
             {showStockLocation == true ?
                 <EditStockLocationModal submit={submit} close={setShowStockLocation} /> : null}
         </>
