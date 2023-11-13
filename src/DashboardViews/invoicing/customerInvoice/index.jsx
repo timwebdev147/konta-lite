@@ -11,6 +11,8 @@ import { ClientEdit } from 'components/dataEdit';
 import { ProductEdit } from 'components/dataEdit';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 
 const InvoiceCustomer = () => {
@@ -23,20 +25,166 @@ const InvoiceCustomer = () => {
     const [showProductModal, setShowProductModal] = useState(false)
     const [selectedClient, setSelectedClient] = useState(null)
     const [selectedProduct, setSelectedProduct] = useState(null)
+    const [selectedProducts, setSelectedProducts] = useState([])
     const [paymentMode, setPaymentMode] = useState([])
+    const [paymentCondition, setPaymentCondition] = useState([])
     const [currencies, setCurrencies] = useState([])
     const [companies, setCompanies] = useState([])
     const [productQuantity, setProductQuantity] = useState(1)
     const [totalPrice, setTotalPrice] = useState(null)
-    const [apprPrice, setApprPrice] = useState(null)
-    
+    const [variousQuantity, setVariousQuantity] = useState([])
+    const [allApprPrice, setAllApprPrice] = useState([])
+    const [totalIndexPrices, setTotalIndexPrices] = useState([])
+    let cookie = window.localStorage.getItem("cookie")
+    const navigate =  useNavigate()
+    let    exTaxTotal, inTaxTotal, taxTotal, addressStr = "";
+    const [companyId, setCompanyId] = useState("")
+    const [currency, setCurrency] = useState("")
+    const [dueDate, setDueDate] = useState("")
+    const [paymentConditionId, setPaymentConditionId] = useState("")
+    const [paymentModeId, setPaymentModeId] = useState("")
+    const [invoiceLineList, setInvoiceLineList] = useState([])
+    const [isValidated, setIsvalidated] = useState([])
+
+
+    const formData = {
+        "currencyId": currency,
+        "paymentCondition": paymentConditionId,
+        "paymentModeId": paymentModeId,
+        "invoiceLineList": invoiceLineList,
+        "partnerId": selectedClient?.id,
+        "companyId": companyId,
+        "dueDate": dueDate,
+        "exTaxTotal": exTaxTotal,
+        "inTaxTotal": totalPrice,
+        "taxTotal": taxTotal,
+        "addressStr": addressStr
+    }
+
+    function submit (){
+        
+        axios.post("http://localhost:9000/api/invoice/create", formData , {
+            headers: {
+                cookiee: cookie.toString()
+            }
+        })
+        .then(res => {
+            console.log(res.data);
+            toast.success('your invoice has been created successfully')
+            navigate("/account/invoice")
+        })
+        .catch(err => {
+            console.log(err);
+        })
+        console.log(formData);
+    }
+
+    function addProducts_to_line(data){
+        setSelectedProduct(data)
+        let isAvailable = false;
+        let Pindex;
+        for (let index = 0; index < selectedProducts.length; index++) {
+            const element = selectedProducts[index];
+            if (element.id == data.id) {
+                isAvailable = true;
+                Pindex = index
+            }
+        }
+        if (isAvailable) {
+            let quantities = variousQuantity.map((quantity, i) => {
+                if (i == Pindex) {
+                    return quantity + 1;
+                }else{
+                    return quantity
+                }
+            })
+            let totals = allApprPrice.map((price, i) => {
+                if (i == Pindex) {
+                    let sum =  price * quantities[Pindex];
+                    return sum.toFixed(2);
+                }else{
+                    return totalIndexPrices[i]
+                }
+            })
+            console.log(quantities);
+            setTotalIndexPrices(totals)
+            setVariousQuantity(quantities)
+            console.log(variousQuantity);
+            
+        }else{
+
+            setSelectedProducts([
+                ...selectedProducts,
+                data
+            ])
+            setVariousQuantity([
+                ...variousQuantity,
+                1
+            ])
+            setAllApprPrice([
+                ...allApprPrice,
+                parseInt(data.salePrice).toFixed(2)
+            ])
+            setTotalIndexPrices([
+                ...totalIndexPrices,
+                parseInt(data.salePrice).toFixed(2)
+            ])
+            setIsvalidated([
+                ...isValidated,
+                "false"
+            ])
+        }
+        // setInvoiceLineList([
+        //     ...invoiceLineList,
+        //     data.id
+        // ])
+        if(totalPrice == null){
+            setTotalPrice(parseInt(data?.salePrice))
+        }else{
+            let total = parseInt(totalPrice) + parseInt(data?.salePrice)
+            setTotalPrice(total)
+        }
+        console.log(isValidated);
+    }
+
+    function updateIndexQuantity(index){
+        let quantities = variousQuantity.map((quantity, i) => {
+            if (i == index) {
+                return quantity + 1;
+            }else{
+                return quantity
+            }
+        })
+        let totals = allApprPrice.map((price, i) => {
+            if (i == index) {
+                let sum =  price * quantities[index];
+                return sum.toFixed(2);
+            }else{
+                return totalIndexPrices[i]
+            }
+        })
+        let tp = 0;
+        for (let i = 0; i < totals.length; i++) {
+            let total = totals[i];
+            total = parseInt(total)
+            tp = total + tp;
+            tp = parseInt(tp)
+            
+        }
+        setTotalPrice(tp)
+        setTotalIndexPrices(totals)
+        setVariousQuantity(quantities)
+        console.log(quantities);
+    }
     
     function simplifyData(){
-        let price = parseInt(selectedProduct?.salePrice)
-        price = price.toFixed(2)
-        setApprPrice(price)
-        setTotalPrice(null)
-        setProductQuantity(1)
+        let prices = allApprPrice.map((price, i) => {
+            let mPrice = parseInt(price)
+            mPrice = mPrice.toFixed(2)
+            return mPrice
+        })
+        setAllApprPrice(prices)
+        // setTotalIndexPrices([])
     }
     function updateQuantity(props){
         if (props == "increase") {
@@ -120,7 +268,7 @@ const InvoiceCustomer = () => {
         })
     }
 
-    let cookie = window.localStorage.getItem("cookie")
+    
     function get_payment_mode_and_currencies(){
         axios.get("http://localhost:9000/api/model/data/com.axelor.apps.account.db.PaymentMode", {
             headers: {
@@ -131,6 +279,20 @@ const InvoiceCustomer = () => {
             let paymentModes = res.data.data;
             setPaymentMode(paymentModes)
             console.log("payment methods", paymentModes);
+        })
+        .catch(err => {
+            console.log(err, cookie);
+        })
+
+        axios.get("http://localhost:9000/api/model/data/com.axelor.apps.account.db.PaymentCondition", {
+            headers: {
+                cookiee: cookie.toString()
+            }
+        })
+        .then(res => {
+            let paymentCondition = res.data.data;
+            setPaymentCondition(paymentCondition)
+            console.log("payment methods", paymentCondition);
         })
         .catch(err => {
             console.log(err, cookie);
@@ -196,13 +358,119 @@ const InvoiceCustomer = () => {
         })
     }
 
-    function deleteInfo(props){
+    function deleteInfo(props, id, index){
+
         if (props == "client") {
             setSelectedClient(null)
-        }else(
-            setSelectedProduct(null)
-        )
+        }else{
+            let filter_products = selectedProducts.filter(item => {
+                return item.id != id;
+            })
+            let filter_quantity = variousQuantity.filter((item, i) => {
+                if(i != index){
+
+                    return item
+                }
+            })
+            let filter_apprPrice = allApprPrice.filter((item, i) => {
+                if(i != index){
+
+                    return item
+                }
+            })
+            let filter_validateStatus = isValidated.filter((item, i) => {
+                if (i != index) {
+                    return item
+                }
+            })
+            
+            setTotalPrice(totalPrice - totalIndexPrices[index] )
+            let filter_totalPrice = totalIndexPrices.filter((item, i) => {
+                if(i != index){
+                    
+                    return item
+                }
+            })
+            console.log(filter_validateStatus);
+            setSelectedProducts(filter_products)
+            setVariousQuantity(filter_quantity)
+            setAllApprPrice(filter_apprPrice)
+            setTotalIndexPrices(filter_totalPrice)
+            setIsvalidated(filter_validateStatus)
+        }
     }
+
+    
+    function submitProduct(fields) {
+        const formData = {}
+        fields.forEach(field => {
+            formData[field.name] = field.value
+        })
+        axios.post("http://localhost:9000/api/product/create", formData, {
+            headers: {
+                cookiee: cookie.toString()
+            }
+        }).then(res => {
+            console.log(res);
+            setSelectedProduct(res.data.data[0])
+            toast.success("product has been created")
+            setShowProductModal(false)
+            document.body.style.overflowY = "scroll";
+        }).catch(err => console.log(err))
+    }
+    function submitClient(fields) {
+        const formData = {}
+        fields.forEach(field => {
+            formData[field.name] = field.value
+        })
+        axios.post("http://localhost:9000/api/partner/${partner}/create", formData, {
+            headers: {
+                cookiee: cookie.toString()
+            }
+        }).then(res => {
+            console.log(res);
+            setSelectedClient(res.data.data[0])
+            toast.success("Partner/client has been created")
+            setshowCustomerModal(false)
+            document.body.style.overflowY = "scroll";
+        }).catch(err => console.log(err))
+    }
+
+    function validateProduct(productName, qty, unitId, price, productId, index){
+        let formData = {
+                productName,
+                qty,
+                unitId,
+                price,
+                productId
+            }
+            let validStatus = isValidated.map((item, i) => {
+                if (i == index) {
+                    return "true";
+                }
+                return item;
+            })
+            setIsvalidated(validStatus)
+            axios.post("http://localhost:9000/api/invoiceline", formData , {
+                headers: {
+                    cookiee: cookie.toString()
+                }
+            })
+            .then(res => {
+                let invoiceLineId = res.data.data[0].id;
+                setInvoiceLineList([
+                    ...invoiceLineList,
+                    invoiceLineId
+                ])
+                console.log(invoiceLineId);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+
+            
+    }
+
     useEffect(() => {
         getEmail()
         console.log(selectedClient);
@@ -247,7 +515,7 @@ return(
                     null:
                 <div>
                     <h5>Montant Total</h5>
-                    <h3>{totalPrice || apprPrice} €</h3>
+                    <h3>{totalPrice || allApprPrice[0]} €</h3>
                 </div>
                 }
             </div>
@@ -301,16 +569,19 @@ return(
                 </div>
             </div>
             {
-                selectedProduct == null?
+                selectedProducts.length == 0?
                 null:
-            <div className={styles.productList}>
-                <p><span>1</span>{selectedProduct?.name}</p>
-                <div>
-                    <p>{productQuantity}</p>
-                    <p>{apprPrice || selectedProduct?.price}</p>
-                    <p>{totalPrice == null ? apprPrice: totalPrice} € </p>
+                selectedProducts.map((item, index) => (
+
+                <div key={index} className={styles.productList}>
+                    <p><span>{index + 1}</span>{item?.name}</p>
+                    <div>
+                        <p>{variousQuantity[index]}</p>
+                        <p>{allApprPrice[index]}</p>
+                        <p>{totalIndexPrices[index]} € </p>
+                    </div>
                 </div>
-            </div>
+                ))
             }
         </div>
 
@@ -380,48 +651,59 @@ return(
                 <Icon className={styles.icon}>keyboard_arrow_down</Icon>
             }
         </div>
-        {
-            selectedProduct == null?
+            
         <div className={clicked == "second"? styles.searchBox: styles.hide}>
             <div>
                 {
                     showList != ""?
-                    <SearchListBox data={products} select={setSelectedProduct} />:
+                    <SearchListBox data={products} select={addProducts_to_line} />:
                     null
                 }
                 <input onFocus={() => show("second")} onBlur={() => {setTimeout(() => {hide("second")}, 500)}} placeholder='Rechercher un article existant' type="text" />
                 <Icon className={styles.inputIcon}>search</Icon>
                 <span  onClick={() => showModal("product")} className={styles.button}><Icon className={styles.buttonIcon}>add</Icon></span>
             </div>
-        </div>:
-        <div className={clicked == "second"? styles.displayProduct: styles.hide}>
+        </div>
+        {
+        selectedProducts.length != 0?
+        selectedProducts.map((item, index) => (
+
+        <div key={index} className={clicked == "second"? styles.displayProduct: styles.hide}>
             <div>
                 <div className={styles.firstRow}>
                     <div className={styles.quantity}>
                         <span onClick={() => updateQuantity("decrease")}>-</span>
-                        <span>{productQuantity}</span>
-                        <span onClick={() => updateQuantity("increase")}>+</span>
+                        <span>{variousQuantity[index]}</span>
+                        <span onClick={() => updateIndexQuantity(index)}>+</span>
                     </div>
                     <div className={styles.info}>
-                        <p>{selectedProduct.fullName}</p>
-                        <p>{totalPrice == null ? apprPrice: totalPrice} € par article</p>
+                        <p>{item.name}</p>
+                        <p>{totalIndexPrices[index]} € par article</p>
                     </div>
                     <Icon className={styles.DPicon}>edit</Icon>
                 </div>
                 <hr />
                 <div className={styles.secondRow}>
                     <div className={styles.info}>
-                        <p>Développement web</p>
-                        <p>x {productQuantity} = {totalPrice == null ? apprPrice: totalPrice} € </p>
+                        <p>{item.dtype}</p>
+                        <p>x {variousQuantity[index]} = {totalIndexPrices[index]} € </p>
                     </div>
                     <div className={styles.function}>
-                        <Icon onClick={() => deleteInfo("product")} className={styles.icon}>delete</Icon>
-                        <span className={styles.button}>Valider</span>
+                        <Icon onClick={() => deleteInfo("product", item.id, index)} className={styles.icon}>delete</Icon>
+                        {
+                            isValidated[index] == "true"?
+                            <span><Icon className={styles.checkIcon}>check_circle_outline</Icon>&nbsp;<p>validated</p></span>
+                            :
+                            <span onClick={() => validateProduct(item.name, variousQuantity[index], item.unit.id || null, item.salePrice, item.id, index)} className={styles.button}>Valider</span>
+                        }
                     </div>
                 </div>
             </div>
         </div>
+
+        )): null
         }
+
         <div onClick={() => open("third")} className={clicked == "third"? styles.clicked: null}>
             <span className={styles.listNumber}>3</span>
             <p className={styles.label}>Livraison et paiement </p>
@@ -432,8 +714,8 @@ return(
                 {/* date input field */}
             <FormControl className={styles.formControl}  sx={{width: '100%' }} >
                         
-                        <FormLabel className={styles.formLabel}>Date de livraison</FormLabel>
-                        <DatePicker  defaultValue={dayjs('2022-04-17')} />
+                        <FormLabel className={styles.formLabel}>Date d&apos;échéance</FormLabel>
+                        <DatePicker onChange={(newDate) => setDueDate( newDate.format('YYYY-MM-DD') )}  value={dueDate}  defaultValue={dayjs('2022-04-17')} />
             </FormControl>
              {/* currency select field */}
             <FormControl className={styles.formControl}  sx={{width: '100%' }} >
@@ -451,6 +733,7 @@ return(
                             }
                         }}
                         displayEmpty
+                        onChange={e => setCurrency(e.target.value)}
                         id="demo-simple-select"
                         >
                             <MenuItem ><em>sélectionner une devise</em></MenuItem>
@@ -478,6 +761,7 @@ return(
                             }
                         }}
                         displayEmpty
+                        onChange={e => setCompanyId(e.target.value)}
                         id="demo-simple-select"
                         >
                             <MenuItem ><em>sélectionner une enterprise</em></MenuItem>
@@ -506,36 +790,58 @@ return(
                         }}
                         id="demo-simple-select"
                         displayEmpty
+                        onChange={e => setPaymentConditionId(e.target.value)}
                         >
                             
-                            <MenuItem  ><em>Selectionnez dans la liste</em></MenuItem>
-                                <MenuItem  value={"Immediat"}>Immediat</MenuItem>
-                                <MenuItem  value={"10 jours"}>10 jours</MenuItem>
-                                <MenuItem  value={"15 jours"}>15 jours</MenuItem>
-                                <MenuItem  value={"20 jours"}>20 jours</MenuItem>
-                                <MenuItem  value={"30 jours"}>30 jours</MenuItem>
-                                <MenuItem  value={"45 jours"}>45 jours</MenuItem>
-                                <MenuItem  value={"60 jours"}>60 jours</MenuItem>
+                            <MenuItem><em>Selectionnez dans la liste</em></MenuItem>
+                            {
+                                paymentCondition?.map((data, index) => (
+
+                                <MenuItem key={index} value={data.id}>{data.name}</MenuItem>
+                                ))
+                            }
                         </Select>
             </FormControl>
              {/* methods of payment checkbox field */}
-            <h3>Méthodes de paiement </h3>
-            <FormControl className={styles.formControl}  component="fieldset" variant="standard">
-                        <FormLabel className={styles.formLabel} component="legend">Type(s) de paiement(s) souhaité(s) </FormLabel>
-                        <FormGroup className={styles.formGroup}>
+            <FormControl className={styles.formControl}  sx={{width: '100%' }}>
+                        <FormLabel className={styles.formLabel} >Type(s) de paiement(s) souhaité(s) </FormLabel>
+                        {/* <FormGroup onChange={e => setPaymentModeId(e.target.value)}  className={styles.formGroup}>
                             {
                                 paymentMode?.map((data, index) => (
                                     <FormControlLabel
                                         className={styles.formControlLabel}
                                         key={index}
                                         control={
-                                        <Checkbox   name={data.name} />
+                                        <Checkbox value={data.id}   name={data.name} />
                                         }
                                         label={data.name}
                                     />
                                 ))
                             }
-                        </FormGroup>
+                        </FormGroup> */}
+                        <Select className={styles.select}
+                        sx={{ 
+                            color: "black",
+                            // padding: '0.70em',
+                            '.MuiSelect-icon': {
+                                display: 'block',
+                            },
+                            '.css-1cohrqd-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.MuiSelect-select': {
+                                padding: '0.70em !important',
+                            }
+                        }}
+                        displayEmpty
+                        onChange={e => setPaymentModeId(e.target.value)}
+                        id="demo-simple-select"
+                        >
+                            <MenuItem ><em>sélectionner une enterprise</em></MenuItem>
+                            {
+                                paymentMode?.map((data, index) => (
+
+                                <MenuItem key={index} value={data.id}>{data.name}</MenuItem>
+                                ))
+                            }
+                        </Select>
           </FormControl>
             </form>
         </div>
@@ -547,7 +853,7 @@ return(
             </div>
             <input type="radio" name="" id="" />
         </div>
-        <button>Finaliser</button>
+        <button onClick={() => submit()}>Finaliser</button>
     </div>
 </Box>
 </MDBox>
@@ -555,9 +861,9 @@ return(
 
 {
     showClientModal == true?
-    <ClientEdit close={setShowClientModal}/>: 
+    <ClientEdit submit={submitClient} close={setShowClientModal}/>: 
     showProductModal == true?
-    <ProductEdit close={setShowProductModal}/>: null
+    <ProductEdit submit={submitProduct} close={setShowProductModal}/>: null
 }
 </>
 )

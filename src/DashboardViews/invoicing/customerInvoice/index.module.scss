@@ -498,6 +498,22 @@
                             .icon{
                                 margin-right: 20px;
                             }
+                            >span{
+                                display: flex;
+                                align-items: center;
+                                p{
+                                    color: #37bb93;
+                                    font-size: small;
+                                    text-transform: uppercase;
+                                }
+                                .checkIcon{
+                                    font-size: medium;
+                                    text-transform: initial;
+                                    background-color: #37bb93;
+                                    border-radius: 200px;
+                                    color: white;
+                                }
+                            }
                             .button{
                                 font-size: 16px;
                                 // width: 200px;

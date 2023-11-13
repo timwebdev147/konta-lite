@@ -239,6 +239,31 @@
                     width: 60px;
                     display: flex;
                     justify-content: flex-start;
+                    span{
+                        cursor: pointer;
+                    }
+                    .actions{
+                        // display: none;
+                        cursor: initial;
+                        position: absolute;
+                        top: 30px;
+                        right: 0;
+                        width: 200px;
+                        box-shadow: 2px 2px 4px grey;
+                        z-index: 11;
+                        background-color: white;
+                        padding: 10px;
+                        div{
+                            cursor: pointer;
+                            padding: 5px;
+                            span{
+                                margin-right: 5px;
+                            }
+                        }
+                    }
+                    .hide{
+                        display: none;
+                    }
                 }
             }
         }

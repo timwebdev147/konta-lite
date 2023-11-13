@@ -516,6 +516,35 @@ export const CompanyEdit = ({close, submit}) => {
 }
 export const PartnerEdit = ({close, submit}) => {
     const form = [
+        
+        {
+            type: "checkbox",
+            radioLabel: "Type d'partenaire *" ,
+            // name: "productTypeSelect",
+            // value: "",
+            checkbox: [
+                {
+                    label: "Client",
+                    name: "isCustomer",
+                    value: false
+                },
+                {
+                    label: "Fournisseur",
+                    name: "isSupplier",
+                    value: false
+                },
+                {
+                    label: "Employe",
+                    name: "isEmployee",
+                    value: false
+                },
+                {
+                    label: "Transporteur",
+                    name: "isCarrier",
+                    value: false
+                }
+            ]
+        },
         {
             name: "name",
             radioLabel: "full name",
@@ -534,6 +563,13 @@ export const PartnerEdit = ({close, submit}) => {
             name: "mobilePhone",
             radioLabel: "phone number",
             placeholder: "Entrez votre numero d'telephone",
+            value: "",
+            type: "text"
+        }, 
+        {
+            name: "ifu",
+            radioLabel: "IFU",
+            placeholder: "Entrez votre IFU",
             value: "",
             type: "text"
         }, 
@@ -636,12 +672,18 @@ export const PartnerEdit = ({close, submit}) => {
     
     
 
-    function handleChange(value, index) {
+    function handleChange(value, index, childIndex) {
 
         let clonedFields = [...formFields];
-        clonedFields[index].value = value;
+        if (clonedFields[index].type == "checkbox") {
+            clonedFields[index].checkbox[childIndex].value = value;
+            
+        }else{
+            clonedFields[index].value = value;
+        }
         setFormFields(clonedFields);
         console.log(formFields)
+
     }
 
     useEffect(() => {
@@ -710,6 +752,23 @@ return(
                         ))
                     }
                     </RadioGroup>
+                    </FormControl>:
+
+                    field.type == "checkbox"?
+                    
+                    <FormControl key={index} className={styles.formControl}> 
+                    <FormLabel className={styles.formLabel}>{field.radioLabel}</FormLabel>
+                    <FormGroup 
+                    className={styles.RadioGroup}>
+                        {
+                            field.checkbox.map((checkbox, childIndex) => (
+                                <FormControlLabel key={childIndex} control={<Checkbox onChange={e => handleChange(e.target.checked, index, childIndex)} />} label={checkbox.label} />
+
+                            ))
+                        }
+                    {/* <FormControlLabel required control={<Checkbox value={27} />} label="Required" />
+                    <FormControlLabel disabled control={<Checkbox value={30} />} label="Disabled" /> */}
+                    </FormGroup>
                     </FormControl>:
 
                     <FormControl key={index} className={styles.formControl}>

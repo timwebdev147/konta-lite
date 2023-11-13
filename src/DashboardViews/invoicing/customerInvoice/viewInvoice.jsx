@@ -151,7 +151,7 @@ return (
     </div>
     <div className={styles.newArticleContainer}>
         <span>exporter<Icon>keyboard_arrow_down</Icon></span>
-        <button onClick={() => navigate("/account/invoice/create")} className={styles.button}>Creer un facture</button>
+        <button onClick={() => navigate("/account/invoice/create")} className={styles.button}>Creer une facture</button>
     </div>
     <div className={styles.searchBox}>
         <div>
@@ -210,7 +210,7 @@ return (
                                     <img src={logo} alt="" />
                                     </div>
                                     <div>
-                                        <p>XPLICIT TOUCH</p>
+                                        <p>{product.company.name}</p>
                                         <p>IFU:3201200175817</p>
                                         <p>RCCM:RB/COT/12/A 14165</p>
                                         <p>romaric.nougbognonhou@yahoo.fr</p>
