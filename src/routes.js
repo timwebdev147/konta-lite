@@ -57,6 +57,7 @@ import Entries from "DashboardViews/accounting/entries";
 import Payments from "DashboardViews/accounting/payments";
 import StockLocations from "DashboardViews/stockLocations";
 import StockLocationDetails from "DashboardViews/stockLocations/stocksLocationDetails";
+import EntriesLine from "DashboardViews/accounting/entries/EntriesLine";
 
 const routes = [
   // {
@@ -182,6 +183,8 @@ const routes = [
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "stocks/:id",
     component: <StockLocationDetails />,
+  },
+  {
     type: "title",
     title: "accounting",
     name: "accounting",
@@ -196,13 +199,21 @@ const routes = [
     component: <Entries/>
   },
   {
-    type: "collapse",
-    name: "Payments",
-    key: "payments",
-    route: "accounting/payments",
-    icon: <Icon fontSize="small">business</Icon>,
-    component: <Payments/>
-  }
+    // type: "collapse",
+    name: "Details de Ecriture",
+    key: "Ecriture",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "entries/:id",
+    component: <EntriesLine />,
+  },
+  // {
+  //   type: "collapse",
+  //   name: "Payments",
+  //   key: "payments",
+  //   route: "accounting/payments",
+  //   icon: <Icon fontSize="small">business</Icon>,
+  //   component: <Payments/>
+  // }
   // {
   //   type: "collapse",
   //   name: "Sign In",

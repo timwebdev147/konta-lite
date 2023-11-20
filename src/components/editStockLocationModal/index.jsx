@@ -205,7 +205,7 @@ export const EditStockLocationModal = ({ editStock, close, submit }) => {
                 <form onSubmit={handleSubmit}>
                     <div className={styles.client}>
                         {
-                            formFields.map((field, index) => (
+                            formFields?.map((field, index) => (
                                 field.type == "select" ?
                                     <FormControl className={styles.formControl} key={index} sx={{ width: '100%' }} >
 
@@ -226,7 +226,7 @@ export const EditStockLocationModal = ({ editStock, close, submit }) => {
                                             onChange={e => handleChange(e.target.value, field.name)}
                                         >
                                             {
-                                                field.options.map((option, index) => (
+                                                field?.options?.map((option, index) => (
                                                     <MenuItem key={index} value={option.id}>{option.name}</MenuItem>
                                                 ))
                                             }
@@ -234,7 +234,7 @@ export const EditStockLocationModal = ({ editStock, close, submit }) => {
                                     <FormControl key={index} className={styles.formControl}>
                                         <FormLabel className={styles.formLabel}>{field.radioLabel}</FormLabel>
                                         {
-                                            field.type == "text" ?
+                                            field?.type == "text" ?
                                                 <TextField
                                                     required={field.required}
                                                     className={styles.input} key={index}

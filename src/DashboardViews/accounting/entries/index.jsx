@@ -7,6 +7,8 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import { toast } from "react-toastify"
 import { CompanyEdit } from "components/dataEdit"
+import { useNavigate } from "react-router-dom"
+import { EntryEdit } from "components/dataEdit"
 
 
 
@@ -17,11 +19,12 @@ const Entries = () => {
     const [showCompanyModal, setShowCompanyModal] = useState(false)
     const [pagination, setPagination] = useState(1)
     const [showActionsIndex, setShowActionsIndex] = useState(null)
+    const navigate = useNavigate()
     const cookie = window.localStorage.getItem("cookie")
 
     function get_companies(pageNumber){
 
-        axios.get("http://localhost:9000/api/company", {
+        axios.get("http://localhost:9000/api/entry", {
             headers: {
                 cookiee: cookie.toString(),
                 pagination: pageNumber
@@ -106,14 +109,15 @@ const Entries = () => {
         fields.forEach(field => {
             formData[field.name] = field.value
         })
-        axios.post("http://localhost:9000/api/company/create", formData, {
+        axios.post("http://localhost:9000/api/entry/create", formData, {
             headers: {
                 cookiee: cookie.toString()
             }
         }).then(res => {
             console.log(res);
             get_companies()
-            toast.success("company has been created")
+            toast.success("entry has been created")
+            navigate(`/account/entries/${res.data.data[0].id}`)
             setShowCompanyModal(false)
             document.body.style.overflowY = "scroll";
         }).catch(err => console.log(err))
@@ -152,11 +156,12 @@ return (
             </div>
     </div>
     <div className={styles.productLists}>
-        <div className={styles.tags}>
-            <div>Nom de l’enterprise</div>
+        <div style={{marginBottom: "20px"}} className={styles.tags}>
+            <div>Societe</div>
             <div className={styles.midCont}>
-                <div>ifu</div>
+                <div>tiers</div>
                 <div>devise</div>
+                <div>Periode</div>
                 <div>Date de création</div>
             </div>
             <div>Actions</div>
@@ -168,20 +173,21 @@ return (
                 <div className={styles.name}>
                     <span className={styles.iconCont}><Icon>event_note</Icon></span>
                     <div className={styles.text}>
-                        <p>{product.name}</p>
-                        <p>company code: {product.code}</p>
+                        <p>{product.company?.name}</p>
+                        <p>company code: {product.company?.code}</p>
                     </div>
                 </div>
                 <div className={styles.midCont}>
-                    <div>{product.ifu || "---"}</div>
+                    <div>{product.partner?.fullName || "---"}</div>
                     <div>{product.currency?.code || "---"}</div>
-                    <div>04 Sept 2023</div>
+                    <div>{product.period?.name}</div>
+                    <div>{product.date}</div>
                 </div>
                 <div onClick={() => show_actions(index)}>
                     <Icon>more_vert</Icon>
                     <div className={showActionsIndex == index ? styles.actions: styles.hide}>
 
-                    <div><Icon>edit</Icon> modifier</div>
+                    <div onClick={() => navigate(`/account/entries/${product.id}`)}><Icon>edit</Icon> modifier</div>
                     <div onClick={() => delete_product(product.id)}><Icon>delete</Icon> supprimer</div>
                     <div onClick={() => toPDF()}><Icon>print</Icon> exporter</div>
 
@@ -202,7 +208,7 @@ return (
 
 {
     showCompanyModal == true?
-    <CompanyEdit submit={submit} close={setShowCompanyModal}/>: null
+    <EntryEdit submit={submit} close={setShowCompanyModal}/>: null
 }
 </>
 )

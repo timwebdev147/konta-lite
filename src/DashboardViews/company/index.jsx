@@ -7,6 +7,7 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import { toast } from "react-toastify"
 import { CompanyEdit } from "components/dataEdit"
+import dayjs from "dayjs"
 
 
 
@@ -175,7 +176,7 @@ return (
                 <div className={styles.midCont}>
                     <div>{product.ifu || "---"}</div>
                     <div>{product.currency?.code || "---"}</div>
-                    <div>04 Sept 2023</div>
+                    <div>{dayjs(product.createdOn).format('DD-MM-YYYY')}</div>
                 </div>
                 <div onClick={() => show_actions(index)}>
                     <Icon>more_vert</Icon>

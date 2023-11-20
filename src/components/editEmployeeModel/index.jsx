@@ -13,6 +13,7 @@ export const EditEmployeeModal = ({ editEmployee, isEdit, close, submit }) => {
     const [partners, setPartners] = useState([])
     const [editPartner, setEditPartner] = useState([])
     const [editContract, setEditContract] = useState([])
+    const [isContract, setIsContract] = useState(false);
     const [formFields, setFormFields] = useState([]);
     const [formData, setFormData] = useState({
         sexSelect: editEmployee != undefined ? '' : undefined,
@@ -28,136 +29,6 @@ export const EditEmployeeModal = ({ editEmployee, isEdit, close, submit }) => {
         startDate: undefined,
     });
 
-
-    // const form = [
-    //     {
-    //         sectionName: "Informations sur l'employée ",
-    //         subSections: [
-    //             {
-    //                 type: "radio",
-    //                 radioLabel: "Sexe *",
-    //                 value: undefined,
-    //                 name: "sexSelect",
-    //                 radio: [
-    //                     {
-    //                         label: "Homme",
-    //                         value: "M"
-    //                     },
-    //                     {
-    //                         label: "Femme",
-    //                         value: "F"
-    //                     }
-    //                 ]
-    //             },
-    //             {
-    //                 type: "text",
-    //                 radioLabel: "Nom *",
-    //                 required: "true",
-    //                 name: "name",
-    //                 value: undefined,
-    //                 placeholder: "Entrez le nom"
-
-    //             },
-    //             {
-    //                 type: "text",
-    //                 radioLabel: "Prénom *",
-    //                 required: "true",
-    //                 name: "firstName",
-    //                 value: undefined,
-    //                 placeholder: "Entrez le prénom"
-
-    //             },
-    //             {
-    //                 type: "text",
-    //                 radioLabel: "Télephone",
-    //                 name: "mobilePhone",
-    //                 value: undefined,
-    //                 placeholder: "Entrez le prénom"
-
-    //             },
-    //             {
-    //                 type: "text",
-    //                 radioLabel: "Address ",
-    //                 name: "address",
-    //                 value: undefined,
-    //                 placeholder: "Entrez l'addresse"
-
-    //             },
-    //             {
-    //                 type: "multiline",
-    //                 name: "description",
-    //                 value: undefined,
-    //                 radioLabel: "Description (optionnel)",
-    //                 placeholder: "Entrez une description"
-
-    //             },
-    //             {
-    //                 type: "select",
-    //                 radioLabel: "Langue",
-    //                 name: "language",
-    //                 value: undefined,
-    //                 options: languages
-    //             },
-    //             {
-    //                 type: "select",
-    //                 radioLabel: "Devise",
-    //                 name: "curency",
-    //                 value: undefined,
-    //                 options: currencies
-    //             },
-    //         ]
-    //     },
-    //     {
-    //         sectionName: "Contrat de travail ",
-    //         subSections: [
-    //             {
-    //                 type: "select",
-    //                 radioLabel: "Entrepise *",
-    //                 name: "companySet",
-    //                 required: "true",
-    //                 value: undefined,
-    //                 placeholder: "Choisissez l'entreprise",
-    //                 options: companies
-    //             },
-    //             {
-    //                 type: "select",
-    //                 radioLabel: "Département de service",
-    //                 name: "companyDepartment",
-    //                 value: undefined,
-    //                 placeholder: "Le département",
-    //                 options: departments
-    //             },
-    //             {
-    //                 type: "text",
-    //                 radioLabel: "Poste",
-    //                 name: "employment",
-    //                 value: undefined,
-    //                 placeholder: "Intitulé du poste",
-    //             },
-    //             {
-    //                 type: "text",
-    //                 radioLabel: "Salaire mensuel global",
-    //                 name: "monthlyGlobalCost",
-    //                 value: undefined,
-    //                 placeholder: "Indiquer le salaire mensuel global",
-    //             },
-    //             {
-    //                 type: "text",
-    //                 radioLabel: "Durée du contrat",
-    //                 name: "duration",
-    //                 value: undefined,
-    //                 placeholder: "Durée du contrat",
-    //             },
-    //             {
-    //                 type: "date",
-    //                 radioLabel: "Date de début",
-    //                 name: "startDate",
-    //                 value: undefined,
-    //                 placeholder: "Date de début",
-    //             },
-    //         ]
-    //     }
-    // ]
 
     const form = [
         {
@@ -216,8 +87,9 @@ export const EditEmployeeModal = ({ editEmployee, isEdit, close, submit }) => {
                 },
             ]
         },
-        formData.isContract ? 
+        // formData.isContract ? 
         {
+            condition: "isContract",
             sectionName: "Contrat de travail ",
             subSections: [
                 {
@@ -266,7 +138,7 @@ export const EditEmployeeModal = ({ editEmployee, isEdit, close, submit }) => {
                     placeholder: "Date de début",
                 },
             ]
-        } : null
+        } 
     ]
 
     async function getEditData()  {
@@ -345,17 +217,13 @@ export const EditEmployeeModal = ({ editEmployee, isEdit, close, submit }) => {
     }
 
 
-    // function handleChange(value, sectionIndex, index) {
-
-    //     let clonedFields = [...formFields];
-    //     clonedFields[sectionIndex].subSections[index].value = value;
-    //     setFormFields(clonedFields);
-    // }
     function handleChange(value, name) {
         let clonedData =formData;
         clonedData[name] = value;
         setFormData(clonedData);
         setFormFields(form);
+        console.log(clonedData);
+        console.log(isContract);
     }
 
     function handleSubmit(event) {
@@ -444,7 +312,7 @@ export const EditEmployeeModal = ({ editEmployee, isEdit, close, submit }) => {
                         <FormGroup>
                             {
                                 formFields.map((section, sectionIndex) => (
-                                    section != null ? 
+                                    section.condition == "isContract" && isContract != "true"? null:
                                     <div key={sectionIndex} className={styles.client}>
                                         <label htmlFor="">{section.sectionName}</label>
                                         {
@@ -471,7 +339,7 @@ export const EditEmployeeModal = ({ editEmployee, isEdit, close, submit }) => {
                                                             onChange={e => handleChange(e.target.value, field.name)}
                                                         >
                                                             {
-                                                                field.options.map((option, index) => (
+                                                                partners.map((option, index) => (
                                                                     <MenuItem key={index} value={option.id}>{option.name}</MenuItem>
                                                                 ))
                                                             }
@@ -488,7 +356,8 @@ export const EditEmployeeModal = ({ editEmployee, isEdit, close, submit }) => {
                                                                 disabled={isEdit}
                                                                 required={field.required}
                                                                 // onChange={e => handleChange(e.target.value, sectionIndex, index)}
-                                                                onChange={e => handleChange(e.target.value, field.name)}
+                                                                
+                                                                onChange={e => { handleChange(e.target.value, field.name); field.name == "isContract"? setIsContract(e.target.value): null}}
                                                             >{
                                                                     field.radio.map((radio, index) => (
                                                                         <FormControlLabel key={index} value={radio.value} control={<Radio sx={{ color: "#1eb386" }} />} label={radio.label} />
@@ -532,7 +401,6 @@ export const EditEmployeeModal = ({ editEmployee, isEdit, close, submit }) => {
                                         }
 
                                     </div>
-                                     : <></>
                                 ))
                             }
                         </FormGroup>

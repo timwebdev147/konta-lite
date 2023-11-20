@@ -1,0 +1,44 @@
+.stockInfos{
+    display: flex;
+    padding: 20px;
+    padding-left: 0px;
+    align-items: flex-start;
+    justify-content: space-between;
+    & div:first-child{
+        font-size: x-small;
+    }
+    :last-child{
+        font-size: medium;
+    }
+    
+}
+.listHead{
+    display: flex;
+    font-size: x-small;
+    font-weight: bold;
+    padding: 20px;
+    align-items: flex-start;
+    justify-content: space-between;
+    text-transform: uppercase;
+}
+.list{
+    display: flex;
+     height: 50px;
+    font-size: x-small;
+    padding-inline: 20px;
+    margin-block: 10px;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #fff;
+    & div{
+        width: 50px;
+        word-wrap: break-word;
+    }:last-child{
+        width: 70px;
+
+    }
+    .productCol{
+        width: 200px;
+    }
+       
+}

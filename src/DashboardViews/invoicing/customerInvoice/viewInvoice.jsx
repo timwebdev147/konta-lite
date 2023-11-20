@@ -10,6 +10,7 @@ import { CompanyEdit } from "components/dataEdit"
 import { useNavigate } from "react-router-dom"
 import { usePDF } from 'react-to-pdf';
 import logo from "../../../images/logo.png";
+import dayjs from "dayjs"
 
 
 
@@ -189,7 +190,7 @@ return (
                 <div className={styles.midCont}>
                     <div>{product.ifu || "---"}</div>
                     <div>{product.inTaxTotal || "---"}</div>
-                    <div>04 Sept 2023</div>
+                    <div>{dayjs(product.createdOn).format('DD-MM-YYYY')}</div>
                 </div>
                 <div >
                     <Icon onClick={() => show_actions(index)}>more_vert</Icon>

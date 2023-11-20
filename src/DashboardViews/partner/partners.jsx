@@ -194,7 +194,7 @@ return (
                 <div className={styles.midCont}>
                     <div>{partner.mobilePhone || "---"}</div>
                     <div>{partner.language?.name || "---"}</div>
-                    <div>{dayjs(partner.createdOn).format('YYYY-MM-DD')}</div>
+                    <div>{dayjs(partner.createdOn).format('DD-MM-YYYY')}</div>
                 </div>
                 <div>
                     <Icon onClick={() => show_actions(index)}>more_vert</Icon>

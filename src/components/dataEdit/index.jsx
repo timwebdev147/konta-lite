@@ -3,6 +3,7 @@ import styles from './index.module.scss';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { SearchListBox } from 'DashboardViews/components';
 
 export const ClientEdit = ({close}) => {
     const form = [
@@ -799,6 +800,337 @@ return(
     </div>
 )
 }
+export const EntryEdit = ({close, submit}) => {
+    const form = [
+        
+        
+        {
+            name: "company",
+            radioLabel: "company",
+            value: "",
+            type: "select",
+            em: "sélectionner une enterprise",
+        }, 
+        {
+            name: "journal",
+            radioLabel: "journal",
+            value: "",
+            type: "select",
+            em: "sélectionner une journal",
+        },
+        
+        {
+            name: "partner",
+            radioLabel: "partner",
+            value: "",
+            type: "select",
+            em: "sélectionner une tier",
+        },
+        {
+            name: "period",
+            radioLabel: "period",
+            value: "",
+            type: "select",
+            em: "sélectionner une periode",
+        },
+        {
+            name: "paymentMode",
+            radioLabel: "payment mode",
+            value: "",
+            type: "select",
+            em: "sélectionner une mode de paiment",
+        },
+        {
+            name: "currency",
+            radioLabel: "currency",
+            value: "",
+            type: "select",
+            em: "sélectionner une devise",
+        }
+    ]
+
+    const [formFields, setFormFields] = useState(form)
+    const cookie = window.localStorage.getItem("cookie")
+    const [company, setCompany] = useState([])
+    const [journal, setJournal] = useState([])
+    const [period, setPeriod] = useState([])
+    const [paymentMode, setPaymentMode] = useState([])
+    const [currency, setCurrency] = useState([])
+    const [partner, setPartner] = useState([])
+    const [languages, setLanguages] = useState([])
+    
+
+
+
+
+
+
+
+    function get_modelsData(){
+
+
+
+        //fetch company
+        axios.get("http://localhost:9000/api/company", {
+            headers: {
+                cookiee: cookie.toString()
+            }
+        })
+        .then(res => {
+            let company = res.data.data;
+            setCompany(company)
+            console.log("company", company);
+        })
+        .catch(err => {
+            console.log(err, cookie);
+        })
+
+        //fetch partner
+        axios.get("http://localhost:9000/api/partner", {
+            headers: {
+                cookiee: cookie.toString()
+            }
+        })
+        .then(res => {
+            let partner = res.data.data;
+            setPartner(partner)
+            console.log("partner", partner);
+        })
+        .catch(err => {
+            console.log(err, cookie);
+        })
+
+
+        //fetch period
+        axios.get("http://localhost:9000/api/period", {
+            headers: {
+                cookiee: cookie.toString()
+            }
+        })
+        .then(res => {
+            let period = res.data.data;
+            setPeriod(period)
+            console.log("period", period);
+        })
+        .catch(err => {
+            console.log(err, cookie);
+        })
+
+
+        //fetch journal
+        axios.get("http://localhost:9000/api/journal", {
+            headers: {
+                cookiee: cookie.toString()
+            }
+        })
+        .then(res => {
+            let journal = res.data.data;
+            setJournal(journal)
+            console.log("journal", journal);
+        })
+        .catch(err => {
+            console.log(err, cookie);
+        })
+
+
+        //fetch payment mode
+        axios.get("http://localhost:9000/api/paymentmode", {
+            headers: {
+                cookiee: cookie.toString()
+            }
+        })
+        .then(res => {
+            let paymentmode = res.data.data;
+            setPaymentMode(paymentmode)
+            console.log("payment mode", paymentmode);
+        })
+        .catch(err => {
+            console.log(err, cookie);
+        })
+
+
+        //fetch currency
+        axios.get("http://localhost:9000/api/currency", {
+            headers: {
+                cookiee: cookie.toString()
+            }
+        })
+        .then(res => {
+            let currency = res.data.data;
+            setCurrency(currency)
+            console.log("currency", currency);
+        })
+        .catch(err => {
+            console.log(err, cookie);
+        })
+
+
+        //fetch languages
+        axios.get("http://localhost:9000/api/language", {
+            headers: {
+                cookiee: cookie.toString()
+            }
+        })
+        .then(res => {
+            let language = res.data.data;
+            setLanguages(language)
+            console.log("language", language);
+        })
+        .catch(err => {
+            console.log(err, cookie);
+        })
+    }
+    
+    
+
+    function handleChange(value, index, childIndex) {
+
+        let clonedFields = [...formFields];
+        if (clonedFields[index].type == "checkbox") {
+            clonedFields[index].checkbox[childIndex].value = value;
+            
+        }else{
+            clonedFields[index].value = value;
+        }
+        setFormFields(clonedFields);
+        console.log(formFields)
+
+    }
+
+    useEffect(() => {
+        get_modelsData()
+    }, [])
+
+
+return(
+    <div className={styles.container}>
+        <div>
+            <div className={styles.first}>
+                <p>Ajouter un nouvel ecriture </p>
+                <Icon onClick={() => {document.body.style.overflowY = "scroll"; close(false)}} className={styles.icon}>highlight_off</Icon>
+            </div>
+            <div className={styles.formContainer}>
+        <form className={styles.client}>
+            
+            {
+                formFields.map((field, index) => (
+                    field.type == "select"?
+                    <FormControl className={styles.formControl} key={index} sx={{width: '100%' }} >
+                    
+                    <FormLabel className={styles.formLabel}>{field.radioLabel}</FormLabel>
+                    <Select className={styles.select}
+                    sx={{ 
+                        color: "black",
+                        // padding: '0.70em',
+                        '.MuiSelect-icon': {
+                            display: 'block',
+                        },
+                        '.css-1cohrqd-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.MuiSelect-select': {
+                            padding: '0.70em !important',
+                        }
+                    }}
+                    id="demo-simple-select"
+                    value={field.value}
+                    onChange={e => handleChange(e.target.value, index)}
+                    >
+                        <MenuItem ><em>{field.em}</em></MenuItem>
+                    {
+                        field.name == "company"?
+                        company?.map((currency, index) => (
+
+                        <MenuItem key={index} value={currency.id}>{currency.name}</MenuItem>
+                        )):
+                        field.name == "journal"?
+                        journal?.map((currency, index) => (
+
+                        <MenuItem key={index} value={currency.id}>{currency.name}</MenuItem>
+                        )):
+                        field.name == "partner"?
+                        partner?.map((currency, index) => (
+
+                        <MenuItem key={index} value={currency.id}>{currency.name}</MenuItem>
+                        )):
+                        field.name == "paymentMode"?
+                        paymentMode?.map((currency, index) => (
+
+                        <MenuItem key={index} value={currency.id}>{currency.name}</MenuItem>
+                        )):
+                        field.name == "period"?
+                        period?.map((currency, index) => (
+
+                        <MenuItem key={index} value={currency.id}>{currency.name}</MenuItem>
+                        )):
+                        currency?.map((currency, index) => (
+
+                        <MenuItem key={index} value={currency.id}>{currency.name}</MenuItem>
+                        ))
+
+                    }
+                    </Select></FormControl>:
+
+                    field.type == "radio"?
+                    <FormControl key={index} className={styles.formControl}>
+                    <FormLabel className={styles.formLabel}>{field.radioLabel}</FormLabel>
+                    <RadioGroup
+                        className={styles.RadioGroup}
+                        aria-labelledby="demo-radio-buttons-group-label"
+                        defaultValue=""
+                        name="radio-buttons-group"
+                        onChange={e => handleChange(e.target.value, index)}
+                    >{
+                        field.radio.map((radio, index) => (
+                            <FormControlLabel key={index} value={radio.value} control={<Radio sx={{ color: "#1eb386"}} />} label={radio.label} />
+
+                        ))
+                    }
+                    </RadioGroup>
+                    </FormControl>:
+
+                    field.type == "checkbox"?
+                    
+                    <FormControl key={index} className={styles.formControl}> 
+                    <FormLabel className={styles.formLabel}>{field.radioLabel}</FormLabel>
+                    <FormGroup 
+                    className={styles.RadioGroup}>
+                        {
+                            field.checkbox.map((checkbox, childIndex) => (
+                                <FormControlLabel key={childIndex} control={<Checkbox onChange={e => handleChange(e.target.checked, index, childIndex)} />} label={checkbox.label} />
+
+                            ))
+                        }
+                    {/* <FormControlLabel required control={<Checkbox value={27} />} label="Required" />
+                    <FormControlLabel disabled control={<Checkbox value={30} />} label="Disabled" /> */}
+                    </FormGroup>
+                    </FormControl>:
+
+                    <FormControl key={index} className={styles.formControl}>
+                    <FormLabel className={styles.formLabel}>{field.radioLabel}</FormLabel>
+                    {
+                        field.type == "multiline"?
+                        <TextField
+                        className={styles.input} key={index} 
+                        multiline
+                        type={field.type} onChange={e => handleChange(e.target.value, index)} 
+                        id="outlined-multiline-static" rows={10} label={field.placeholder} variant="outlined" 
+                        />:
+                        <TextField
+                        className={styles.input} key={index} 
+                        type={field.type} onChange={e => handleChange(e.target.value, index)} 
+                        id="outlined-basic" label={field.placeholder} variant="outlined" 
+                        />
+                    }
+                    </FormControl>
+                ))
+            }
+        </form>
+
+    </div>
+    <button onClick={() => submit(formFields)} className={styles.button}>Enregistrer</button>
+
+        </div>
+    </div>
+)
+}
 
 ClientEdit.propTypes ={
     close: PropTypes.func
@@ -813,6 +1145,10 @@ CompanyEdit.propTypes ={
 }
 
 PartnerEdit.propTypes ={
+    close: PropTypes.func,
+    submit: PropTypes.func
+}
+EntryEdit.propTypes ={
     close: PropTypes.func,
     submit: PropTypes.func
 }

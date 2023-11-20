@@ -8,6 +8,7 @@ import axios from "axios"
 import { EditEmployeeModal } from "../../components/editEmployeeModel"
 import { ConfirmationModal } from "../../components/confirmationModal"
 import { toast } from "react-toastify"
+import dayjs from "dayjs"
 
 
 
@@ -210,7 +211,7 @@ const Employees = () => {
                                         <div className={styles.midCont}>
                                             <div>{employee.mobileProPhone}</div>
                                             <div>{parseInt(employee.dailyWorkHours).toFixed(2)} h</div>
-                                            <div>{employee.createdOn}</div>
+                                            <div>{dayjs(employee.createdOn).format('DD-MM-YYYY')}</div>
                                         </div>
                                         <div >
                                             <Icon onClick={() => onMenuOpen(employee)} >

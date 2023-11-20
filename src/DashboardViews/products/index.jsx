@@ -7,6 +7,7 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import { ProductEdit } from "components/dataEdit"
 import { toast } from "react-toastify"
+import dayjs from "dayjs"
 
 
 
@@ -178,7 +179,7 @@ return (
                 <div className={styles.midCont}>
                     <div>0 Unité(s)</div>
                     <div>{parseInt(product.salePrice).toFixed(2)} €</div>
-                    <div>04 Sept 2023</div>
+                    <div>{dayjs(product.createdOn).format('DD-MM-YYYY')}</div>
                 </div>
                 <div onClick={() => show_actions(index)}>
                     <Icon>more_vert</Icon>
